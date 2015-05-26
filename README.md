@@ -8,7 +8,7 @@ behaviors.
 
 ## Basic usage
 
-`./textme.py Wow! I'm sending this message from the terminal!`
+`./textme.py "Wow, I'm sending this message from the terminal :)"`
 
 ## Configuration
 
