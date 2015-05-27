@@ -131,7 +131,7 @@ def send_text(conf, message):
         print response.read()
     elif 'verbose' in conf:
         rv = json.loads(response.read())
-        print 'Sent  to ' + rv['to'] + ':\n' + rv['message']
+        print 'Sent to ' + rv['to'] + ':\n' + rv['message']
 
 def generate_config(conf):
     rv = ''
