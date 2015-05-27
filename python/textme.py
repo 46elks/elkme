@@ -128,16 +128,16 @@ def send_text(conf, message):
         rv = json.loads(response.read())
         print 'Sent "' + rv['message'] + '" to ' + rv['to']
 
-def generate_config(username, password, to, sender):
+def generate_config(conf):
     rv = ''
-    if username:
-        rv += "username:" + username + "\n"
-    if password:
-        rv += "password:" + password + "\n"
-    if to:
-        rv += "to:" + to + "\n"
-    if sender:
-        rv += "from:" + sender + "\n"
+    if 'username' in conf:
+        rv += "username:" + conf['username'] + "\n"
+    if 'password' in conf:
+        rv += "password:" + conf['password'] + "\n"
+    if 'to' in conf:
+        rv += "to:" + conf['to'] + "\n"
+    if 'from' in conf:
+        rv += "from:" + conf['from'] + "\n"
     if not rv:
         msg  = "# Interactive configuration not supported.\n"
         msg += "# Please provide commandline options for the configuration\n"
@@ -227,30 +227,8 @@ def main():
         print message
 
     if args.saveconf:
-        if 'username' in conf:
-            username = conf['username']
-        else:
-            username = None
-        if 'password' in conf:
-            password = conf['password']
-        else:
-            password = None
-        if 'to' in conf:
-            to = conf['to']
-        else:
-            to = None
-        if 'from' in conf:
-            sender = conf['from']
-        else:
-            sender = None
-
         cf = open(conffile, 'w')
-        cf.write(
-            generate_config(
-                username,
-                password,
-                to,
-                sender))
+        cf.write(generate_config(conf))
         if not message:
             exit(0)
 
