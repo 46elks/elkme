@@ -12,10 +12,13 @@ behaviors.
 
 ## Configuration
 
-Configuration is easiest done by putting your 46elks-credentials and a standard
-sender/reciever in the file `~/.textme`
+The easiest way of configuring `textme` is by entering your API credentials from
+[the 46elks dashboard](https://www.46elks.com/) into the command-line
+application and adding `--saveconf` like 
+`textme -u APIUSERNAME -p APIPASSWORD --saveconf`. You can also add a default
+sender and receiver by adding the `--to` and `--sender` options.
 
-The file is colon-separated, and looks like:
+The configuration file is colon-separated, and looks like:
 
 ````
 username:REPLACE_ME
@@ -27,4 +30,4 @@ to:+46700000000
 ## ToDo
 
 - [ ] Move configuration to "correct" location(s) depending on OS
-- [ ] Add quiet mode
+- [x] Add quiet mode
