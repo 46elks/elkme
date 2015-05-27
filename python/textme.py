@@ -99,6 +99,10 @@ def send_text(conf, message):
         print missing + " missing"
         exit(-3)
 
+    if to[0] != '+':
+        print >> sys.stderr, "Phone number must be of the format +CCXXXXXXXXX"
+        exit(-22)
+
     if type(message) != str: 
         message = string.join(message, " ")
 
@@ -139,7 +143,7 @@ def generate_config(conf):
     if 'from' in conf:
         rv += "from:" + conf['from'] + "\n"
     if not rv:
-        msg  = "# Interactive configuration not supported.\n"
+        msg  = "# Interactive configuration is not supported.\n"
         msg += "# Please provide commandline options for the configuration\n"
         msg += "# you would like to generate a configuration file for."
         print >> sys.stderr, msg
@@ -162,20 +166,14 @@ def parse_args():
         help="Phone number to receive the text message")
     parser.add_argument('-s', '--sender', '--from', dest='sender', 
         action='store', help="""
-            The sender of the message.
-            This could be either a phone number associated to your 
-            46elks-account or a string with a character [a-zA-Z] followed
-            by up to seven alphanumerical characters [0-9a-zA-Z]
+            Sender of the message. See 46elks' API documentation for valid
+            formats
         """)
     parser.add_argument('-u', '--username', dest='username', action='store',
-        help="""
-            Your API username from https://dashboard.46elks.com/
-        """
+        help="Your API username from https://dashboard.46elks.com/"
         )
     parser.add_argument('-p', '--password', dest='password', action='store',
-        help="""
-            Your API password from https://dashboard.46elks.com/
-        """
+        help="Your API password from https://dashboard.46elks.com/"
         )
     parser.add_argument('--saveconf', dest='saveconf', 
         action='count', help="""
