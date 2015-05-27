@@ -1,13 +1,8 @@
 #!/usr/bin/python
-
-from base64 import b64encode
-from urllib import urlencode
-import argparse
-import json
-import os
-import string
-import sys
-import urllib2
+#
+# Copyright (c) 2015 46elks AB <hello@46elks.com>
+# Developed in 2015 by Emil Tullstedt <emil@46elks.com>
+# Licensed under the MIT License
 
 elk = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
@@ -48,6 +43,28 @@ Send a text message using the commandline powered by the 46elks
 API <https://www.46elks.com>. The tool reads it's configuration from a
 colon separated file located in ~/.textme or from commandline
 """
+
+usage = """Hello,
+textme is a commandline tool for sending text messages using the commandline.
+
+To use textme, you need to have an account on 46elks <https://46elks.com> and
+login to your dashboard to receive your API username and password.
+
+Run `textme "Hello internet" -u APIUSERNAME -p APIPASSWORD -t +46700000000` to
+send a text message from commandline. That's it. (oh, and don't forget to
+add --saveconf so that you don't have to enter the settings every time you
+run the application)
+
+See `textme --help` for more information about textme"""
+
+from base64 import b64encode
+from urllib import urlencode
+import argparse
+import json
+import os
+import string
+import sys
+import urllib2
 
 def read_config(path):
     settings = {}
@@ -112,14 +129,22 @@ def send_text(conf, message):
         print 'Sent "' + rv['message'] + '" to ' + rv['to']
 
 def generate_config(username, password, to, sender):
+    rv = ''
     if username:
-        print "username:" + username
+        rv += "username:" + username + "\n"
     if password:
-        print "password:" + password
+        rv += "password:" + password + "\n"
     if to:
-        print "to:" + to
+        rv += "to:" + to + "\n"
     if sender:
-        print "from:" + sender
+        rv += "from:" + sender + "\n"
+    if not rv:
+        msg  = "# Interactive configuration not supported.\n"
+        msg += "# Please provide commandline options for the configuration\n"
+        msg += "# you would like to generate a configuration file for."
+        print >> sys.stderr, msg
+        exit(22)
+    return rv
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -130,9 +155,9 @@ def parse_args():
     parser.add_argument('-vv', '--debug', action='count',
         help="Debug output")
     parser.add_argument('message', metavar='message', type=str, nargs='*',
-        help="The message to be sent, reads a maximum of 160 characters")
+        help="The message to be sent (<160 characters)")
     parser.add_argument('-f', '--file', metavar='file', action='store',
-        help="File to read message from, maximum 160 characters")
+        help="File to read message from (<160 characters)")
     parser.add_argument('-t', '--to', dest='to', action='store',
         help="Phone number to receive the text message")
     parser.add_argument('-s', '--sender', '--from', dest='sender', 
@@ -145,25 +170,31 @@ def parse_args():
     parser.add_argument('-u', '--username', dest='username', action='store',
         help="""
             Your API username from https://dashboard.46elks.com/
-            Reads from ~/.textme if not supplied
         """
         )
     parser.add_argument('-p', '--password', dest='password', action='store',
         help="""
             Your API password from https://dashboard.46elks.com/
-            Reads from ~/.textme if not supplied
         """
         )
-    parser.add_argument('--generateconf', dest='generateconf', action='count',
-        help="""
-            Prints a configuration file for textme with your options to
-            standard output and the exits without sending a message
+    parser.add_argument('--saveconf', dest='saveconf', 
+        action='count', help="""
+            Generates a configuration file from the commandline options and
+            exits.
         """)
+    parser.add_argument('-c', '--config', dest='configfile',
+        help="Location of the configuration file (default ~/.textme)")
     return parser.parse_args()
 
 def main():
     args = parse_args()
-    conf = read_config(os.environ['HOME'] + "/.textme")
+
+    if args.configfile:
+        conffile = os.path.expanduser(args.configfile)
+    else:
+        conffile = os.environ['HOME'] + "/.textme"
+
+    conf = read_config(conffile)
 
 
     if args.verbose >= 1:
@@ -178,10 +209,8 @@ def main():
         conf['username'] = args.username
     if args.password:
         conf['password'] = args.password
-    if args.generateconf:
-        generate_config(args.username, args.password, args.to, args.sender)
-        exit(0)
 
+    message = None
     if args.message and not args.file:
         message = args.message
     elif args.file:
@@ -194,9 +223,39 @@ def main():
                 message += raw_input()
                 message += '\n'
         except EOFError as e:
-            print e
-    else:
-        print "No message provided. Please consult " + sys.argv[0] + " --help"
+            pass
+        print message
+
+    if args.saveconf:
+        if 'username' in conf:
+            username = conf['username']
+        else:
+            username = None
+        if 'password' in conf:
+            password = conf['password']
+        else:
+            password = None
+        if 'to' in conf:
+            to = conf['to']
+        else:
+            to = None
+        if 'from' in conf:
+            sender = conf['from']
+        else:
+            sender = None
+
+        cf = open(conffile, 'w')
+        cf.write(
+            generate_config(
+                username,
+                password,
+                to,
+                sender))
+        if not message:
+            exit(0)
+
+    if not message:
+        print >> sys.stderr, usage
         exit(-1)
 
     if args.verbose >= 3 or (message[0:3][0] == 'elks'):
