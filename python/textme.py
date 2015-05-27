@@ -40,12 +40,13 @@ MMMMMMMMMMMMMMMBYMMJOHANNESLMMOFMM46ELKSMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
 helptext = """
 Send a text message using the commandline powered by the 46elks
-API <https://www.46elks.com>. The tool reads it's configuration from a
-colon separated file located in ~/.textme or from commandline
+API available from https://www.46elks.com. The tool reads it's configuration 
+from a colon separated file located in ~/.textme or from commandline.
+textme also supports pipes
 """
 
 usage = """Hello,
-textme is a commandline tool for sending text messages using the commandline.
+textme is a tool for sending text messages using the commandline.
 
 To use textme, you need to have an account on 46elks <https://46elks.com> and
 login to your dashboard to receive your API username and password.
@@ -130,7 +131,7 @@ def send_text(conf, message):
         print response.read()
     elif 'verbose' in conf:
         rv = json.loads(response.read())
-        print 'Sent "' + rv['message'] + '" to ' + rv['to']
+        print 'Sent  to ' + rv['to'] + ':\n' + rv['message']
 
 def generate_config(conf):
     rv = ''
@@ -155,13 +156,14 @@ def parse_args():
         description=helptext,
         epilog="This application is powered by elks with superpowers!")
     parser.add_argument('-v', '--verbose', action='count',
-        help="Verbose output")
-    parser.add_argument('-vv', '--debug', action='count',
         help="Debug output")
+    parser.add_argument('-q', '--quiet', action='count',
+        help="Suppress most output")
     parser.add_argument('message', metavar='message', type=str, nargs='*',
         help="The message to be sent (<160 characters)")
     parser.add_argument('-f', '--file', metavar='file', action='store',
-        help="File to read message from (<160 characters)")
+        help="""File to read message from (only the first 160 characters
+            are sent)""")
     parser.add_argument('-t', '--to', dest='to', action='store',
         help="Phone number to receive the text message")
     parser.add_argument('-s', '--sender', '--from', dest='sender', 
@@ -170,10 +172,10 @@ def parse_args():
             formats
         """)
     parser.add_argument('-u', '--username', dest='username', action='store',
-        help="Your API username from https://dashboard.46elks.com/"
+        help="Your API username from https://www.46elks.com/"
         )
     parser.add_argument('-p', '--password', dest='password', action='store',
-        help="Your API password from https://dashboard.46elks.com/"
+        help="Your API password from https://www.46elks.com/"
         )
     parser.add_argument('--saveconf', dest='saveconf', 
         action='count', help="""
@@ -195,9 +197,9 @@ def main():
     conf = read_config(conffile)
 
 
-    if args.verbose >= 1:
+    if args.quiet < 1:
         conf['verbose'] = True
-    if args.verbose >= 2 or args.debug:
+    if args.verbose >= 1 and args.quiet < 1:
         conf['debug'] = True
     if args.to:
         conf['to'] = args.to
@@ -222,7 +224,9 @@ def main():
                 message += '\n'
         except EOFError as e:
             pass
-        print message
+        if 'verbose' in conf:
+            print message
+            print "\n----"
 
     if args.saveconf:
         cf = open(conffile, 'w')
@@ -234,7 +238,7 @@ def main():
         print >> sys.stderr, usage
         exit(-1)
 
-    if args.verbose >= 3 or (message[0:3][0] == 'elks'):
+    if args.verbose >= 2 or (message[0:3][0] == 'elks'):
         print elk
 
     send_text(conf, message)
