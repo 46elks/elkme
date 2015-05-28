@@ -18,13 +18,14 @@ application and adding `--saveconf` like
 `textme -u APIUSERNAME -p APIPASSWORD --saveconf`. You can also add a default
 sender and receiver by adding the `--to` and `--sender` options.
 
-The configuration file is colon-separated, and looks like:
+The configuration file is ini-ish, and looks like:
 
 ````
-username:REPLACE_ME
-password:REPLACE_ME
-from:textme
-to:+46700000000
+[46elks]
+username = REPLACE_ME
+password = REPLACE_ME
+from = textme
+to = +46700000000
 ````
 
 ## ToDo
