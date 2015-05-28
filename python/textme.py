@@ -70,7 +70,12 @@ import urllib2
 
 def read_config(path, section="46elks"):
     config = ConfigParser.RawConfigParser()
-    config.read(path)
+    try:
+        config.read(path)
+    except ConfigParser.NoSectionError:
+        pass
+    except ConfigParser.MissingSectionHeaderError:
+        pass
     settings = {}
     for element in config.items(section):
         settings[element[0]] = element[1]
