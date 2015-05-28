@@ -72,13 +72,14 @@ def read_config(path, section="46elks"):
     config = ConfigParser.RawConfigParser()
     try:
         config.read(path)
-    except ConfigParser.NoSectionError:
-        pass
     except ConfigParser.MissingSectionHeaderError:
-        pass
+        return {}
     settings = {}
-    for element in config.items(section):
-        settings[element[0]] = element[1]
+    try:
+        for element in config.items(section):
+            settings[element[0]] = element[1]
+    except ConfigParser.NoSectionError:
+        return {}
     return settings
 
 def send_text(conf, message):
