@@ -1,0 +1,81 @@
+.TH TEXTME 1 "MAY 2015"
+.SH NAME
+textme \- the command-line sms interface
+
+.SH SYNOPSIS
+.B textme.py [-h] [-v] [-q] [-f
+.I file
+.B ] [-t
+.I TO
+.B ] [-s
+.I SENDER
+.B ] [-u
+.I USERNAME
+.B ] [-p
+.I PASSWORD]
+.B [--saveconf] [-c 
+.I CONFIGFILE
+.B ] [
+.I message 
+.B [
+.I message ...
+.B ]]
+
+.SH DESCRIPTION
+.B textme
+is an application for sending text messages with the
+command line using the 46elks API from https://46elks.com
+
+.SH OPTIONS
+.IP "-h, --help"
+Show an overview of the features of textme and then exits
+.IP "-v, --verbose"
+Show debug output, this will display advanced information about the query
+to the user
+.IP "-q, --quiet"
+Avoids most, but not necessarily all, output
+.IP "-f FILE, --file FILE"
+Reads up to 160 characters from a file and sends it to the specified recipient
+.IP "-t TO, --to TO"
+Recipient of the text message. Is read from the configuration file if not
+provided. Must be in the format +CCXXXXXXXX (i.e. +46700000000 and +1XXXXXXXXXX
+are both legal, but 0700000000 or SE0700000000 is not)
+.IP "-s SENDER, --sender SENDER, --from SENDER"
+Specifies who is the sender of the message. You may either insert a string with
+3-11 characters using only a-z, A-Z and 0-9 beginning with a letter or you may
+use a number which is unlocked with your 46elks-account (either a number that
+you have through 46elks or one that 46elks have authorized to your account)
+.IP "-u USERNAME, --username USERNAME"
+Your API username for 46elks which you can find in the 46elks dashboard
+(this is not the same as the username which you use to login to 46elks with)
+.IP "-p PASSWORD, --password PASSWORD"
+Your API password for 46elks which is a secret key found in the
+46elks dashboard that can be used to authenticate your API calls to the server
+togheter with the API username. Make sure to keep your password a secret.
+.IP --saveconf
+Saves the current configuration to ~/.textme. This allows the user to save 
+settings and not have to enter them every time they run textme.
+.B saveconf
+supports saving
+.I --to
+,
+.I --sender
+,
+.I --username
+and
+.I --password
+.IP "-c CONFIGFILE, --config CONFIGFILE"
+Read settings from specified file instead of from ~/.textme
+
+.SH COPYRIGHT
+Licensed under the MIT license.
+Copyright (c) 2015 46elks AB <hello@46elks.com>
+
+This tool is developed by Emil Tullstedt <emil@46elks.com> and has secret
+elk superpowers.
+
+.SH FILES
+.I ~/.textme
+.RS
+Per user configuration file. Overwritten by
+.B --saveconf
