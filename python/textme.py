@@ -61,22 +61,19 @@ See `textme --help` for more information about textme"""
 from base64 import b64encode
 from urllib import urlencode
 import argparse
+import ConfigParser
 import json
 import os
 import string
 import sys
 import urllib2
 
-def read_config(path):
+def read_config(path, section="46elks"):
+    config = ConfigParser.RawConfigParser()
+    config.read(path)
     settings = {}
-    try:
-        with open(path, 'r') as f:
-            for line in f:
-                line = line.split(":")
-                line[-1] = line[-1][:-1] # Remove the new-line character
-                settings[line[0]] = (line[1])
-    except IOError:
-        pass
+    for element in config.items(section):
+        settings[element[0]] = element[1]
     return settings
 
 def send_text(conf, message):
@@ -131,25 +128,32 @@ def send_text(conf, message):
         print response.read()
     elif 'verbose' in conf:
         rv = json.loads(response.read())
-        print 'Sent to ' + rv['to'] + ':\n' + rv['message']
 
-def generate_config(conf):
-    rv = ''
+        if len(message) > 160:
+            print message
+            print "----"
+            print "Sent first 160 characters to " + rv['to'] 
+        else:
+            print 'Sent "' + rv['message'] + '" to ' + rv['to']
+
+def generate_config(conf, section="46elks"):
+    config = ConfigParser.RawConfigParser()
+    config.add_section(section)
     if 'username' in conf:
-        rv += "username:" + conf['username'] + "\n"
+        config.set(section, 'username', conf['username'])
     if 'password' in conf:
-        rv += "password:" + conf['password'] + "\n"
+        config.set(section, "password", conf['password'])
     if 'to' in conf:
-        rv += "to:" + conf['to'] + "\n"
+        config.set(section, "to", conf['to'])
     if 'from' in conf:
-        rv += "from:" + conf['from'] + "\n"
-    if not rv:
-        msg  = "# Interactive configuration is not supported.\n"
-        msg += "# Please provide commandline options for the configuration\n"
-        msg += "# you would like to generate a configuration file for."
-        print >> sys.stderr, msg
-        exit(22)
-    return rv
+        config.set(section, "from", conf['from'])
+    if not config.items(section):
+        error  = "You need to provide options to be stored as"
+        error += " commandline options"
+        print >> sys.stderr, error
+    if 'verbose' in conf:
+        print "Wrote to the config file :)"
+    return config
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -196,7 +200,6 @@ def main():
 
     conf = read_config(conffile)
 
-
     if args.quiet < 1:
         conf['verbose'] = True
     if args.verbose >= 1 and args.quiet < 1:
@@ -224,13 +227,11 @@ def main():
                 message += '\n'
         except EOFError as e:
             pass
-        if 'verbose' in conf:
-            print message
-            print "\n----"
 
     if args.saveconf:
-        cf = open(conffile, 'w')
-        cf.write(generate_config(conf))
+        with open(conffile, 'w') as fdest:
+            settings = generate_config(conf)
+            settings.write(fdest)
         if not message:
             exit(0)
 
