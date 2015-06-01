@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='textme',
       version='0.1.1a1',
@@ -23,5 +23,6 @@ setup(name='textme',
 #        'Programming Language :: Python :: 3.4',
         'Topic :: System :: Monitoring'
       ],
-      keywords="sms 46elks cli monitoring")
+      keywords="sms 46elks cli monitoring",
+      use_2to3 = True)
 
