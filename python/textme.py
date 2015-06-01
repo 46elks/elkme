@@ -168,9 +168,9 @@ def parse_args():
         description=helptext,
         epilog="This application is powered by elks with superpowers!")
     parser.add_argument('-v', '--verbose', action='count',
-        help="Debug output")
+        help="Debug output", default=0)
     parser.add_argument('-q', '--quiet', action='count',
-        help="Suppress most output")
+        help="Suppress most output", default=0)
     parser.add_argument('message', metavar='message', type=str, nargs='*',
         help="The message to be sent (<160 characters)")
     parser.add_argument('-f', '--file', metavar='file', action='store',
@@ -210,7 +210,7 @@ def main():
 
     if args.quiet < 1:
         conf['verbose'] = True
-    if args.verbose >= 1 and args.quiet < 1:
+    if args.verbose >= 1 and args.quiet <1:
         conf['debug'] = True
     if args.to:
         conf['to'] = args.to
