@@ -3,6 +3,7 @@
 # Copyright (c) 2015 46elks AB <hello@46elks.com>
 # Developed in 2015 by Emil Tullstedt <emil@46elks.com>
 # Licensed under the MIT License
+from __future__ import print_function
 
 elk = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
@@ -92,7 +93,8 @@ def send_text(conf, message):
         password = conf['password']
         to = conf['to']
     except KeyError as e:
-        print "You need to provide API username, password and a recipient"
+        print("You need to provide API username, password and a recipient",
+            file=sys.stderr)
         missing = 'Error: '
         if not 'username' in conf:
             missing += "'username' "
@@ -100,11 +102,11 @@ def send_text(conf, message):
             missing += "'password' "
         if not 'to' in conf:
             missing += "'to' " 
-        print missing + " missing"
+        print(missing, "missing")
         exit(-3)
 
     if to[0] != '+':
-        print >> sys.stderr, "Phone number must be of the format +CCXXXXXXXXX"
+        print("Number must be of the format +CCXXXXXXXXX", file=sys.stderr)
         exit(-22)
 
     if type(message) != str: 
@@ -117,7 +119,7 @@ def send_text(conf, message):
     }
 
     if 'debug' in conf:
-        print sms
+        print(sms)
 
     auth = 'Basic ' + b64encode(username + ':' + password)
     conn = urllib2.Request("https://api.46elks.com/a1/SMS",
@@ -126,21 +128,21 @@ def send_text(conf, message):
     try:
         response = urllib2.urlopen(conn)
     except urllib2.HTTPError as e:
-        print e
-        print "\nSending didn't succeed :("
+        print(e)
+        print("\nSending didn't succeed :(")
         exit(-2)
 
     if 'debug' in conf:
-        print response.read()
+        print(response.read())
     elif 'verbose' in conf:
         rv = json.loads(response.read())
 
         if len(message) > 160:
-            print message
-            print "----"
-            print "Sent first 160 characters to " + rv['to'] 
+            print(message)
+            print("----")
+            print("Sent first 160 characters to " + rv['to'] )
         else:
-            print 'Sent "' + rv['message'] + '" to ' + rv['to']
+            print('Sent "' + rv['message'] + '" to ' + rv['to'])
 
 def generate_config(conf, section="46elks"):
     config = ConfigParser.RawConfigParser()
@@ -156,9 +158,9 @@ def generate_config(conf, section="46elks"):
     if not config.items(section):
         error  = "You need to provide options to be stored as"
         error += " commandline options"
-        print >> sys.stderr, error
+        print(error, file=sys.stderr)
     if 'verbose' in conf:
-        print "Wrote to the config file :)"
+        print("Wrote to the config file :)")
     return config
 
 def parse_args():
@@ -242,11 +244,11 @@ def main():
             exit(0)
 
     if not message:
-        print >> sys.stderr, usage
+        print(usage, file=sys.stderr)
         exit(-1)
 
     if args.verbose >= 2 or (message[0:3][0] == 'elks'):
-        print elk
+        print(elk)
 
     send_text(conf, message)
 
