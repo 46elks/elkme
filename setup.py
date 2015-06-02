@@ -11,6 +11,7 @@ setup(name='textme',
       author="Emil Tullstedt",
       author_email='emil@46elks.com',
       license='MIT',
+      packages = ['textme'],
       classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
