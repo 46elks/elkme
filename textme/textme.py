@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2015 46elks AB <hello@46elks.com>
 # Developed in 2015 by Emil Tullstedt <emil@46elks.com>
@@ -120,7 +121,7 @@ def send_text(conf, message):
         exit(-22)
 
     if not isinstance(message, str):
-        message = string.join(message, " ")
+        message = " ".join(message)
 
     sms = {
         'from': sender,
