@@ -12,9 +12,6 @@ setup(name='textme',
       author_email='emil@46elks.com',
       license='MIT',
       packages = find_packages(),
-      py_modules = [
-            'textme.textme'
-          ],
       packages_dir = {'': 'textme'},
       classifiers=[
         'Development Status :: 3 - Alpha',
