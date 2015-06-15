@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='textme',
-      version='0.1.1a1',
+      version='0.2',
       description='Command-line tool for sending SMS',
       long_description="""textme is a command-line tool for sending SMS using
       the 46elks platfrom from the terminal.""",
@@ -14,7 +14,7 @@ setup(name='textme',
       packages = find_packages(),
       packages_dir = {'': 'textme'},
       classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Developers',

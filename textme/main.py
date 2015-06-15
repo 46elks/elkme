@@ -64,7 +64,7 @@ textme also supports pipes
 USAGE = """Hello,
 textme is a tool for sending text messages using the commandline.
 
-To use textme, you need to have an account on 46elks <https://46elks.com> and
+To use textme, you need to have an account on 46elks at https://46elks.com and
 login to your dashboard to receive your API username and password.
 
 Run `textme "Hello internet" -u APIUSERNAME -p APIPASSWORD -t +46700000000` to
