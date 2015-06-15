@@ -269,4 +269,5 @@ def main():
 
     send_text(conf, message)
 
-main()
+if __name__ == '__main__':
+    main()

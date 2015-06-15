@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='textme',
       version='0.1.1a1',
@@ -11,7 +11,11 @@ setup(name='textme',
       author="Emil Tullstedt",
       author_email='emil@46elks.com',
       license='MIT',
-      packages = ['textme'],
+      packages = find_packages(),
+      py_modules = [
+            'textme.textme'
+          ],
+      packages_dir = {'': 'textme'},
       classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -25,5 +29,10 @@ setup(name='textme',
         'Topic :: System :: Monitoring'
       ],
       keywords="sms 46elks cli monitoring",
-      use_2to3 = True)
+      entry_points={
+            'console_scripts': [
+                'textme = textme.main:main'
+                ]
+          },
+      use_2to3 = False)
 
