@@ -10,6 +10,12 @@ behaviors.
 
 `./textme.py "Wow, I'm sending this message from the terminal :)"`
 
+## Installation
+
+Prefered way of installation is by PyPI
+
+`pip install textme`
+
 ## Configuration
 
 The easiest way of configuring `textme` is by entering your API credentials from
@@ -30,5 +36,5 @@ to = +46700000000
 
 ## ToDo
 
-- [ ] Move configuration to "correct" location(s) depending on OS
+- [x] Move configuration to "correct" location(s) depending on OS
 - [x] Add quiet mode

@@ -15,15 +15,15 @@ def default_config_location():
     home = os.path.expanduser('~')
     location = home + os.sep +  ".textme"
 
-    if platform.system() == 'Darwin':
-        location = home + os.sep + 'Library' + os.sep +\
-        'Application Support' + os.sep + 'textme'
+    if platform.system() == "Darwin":
+        location = home + os.sep + "Library" + os.sep +\
+        "Application Support" + os.sep + "textme"
     elif platform.system() == "Linux":
-        location = home + os.sep + '.config' + os.sep + "textme"
+        location = home + os.sep + ".config" + os.sep + "textme"
     elif platform.system() == "Windows":
         # Might break on Windows <= XP
         # That's ok, since XP is no longer supported by MSFT
-        location = os.environ['LOCALAPPDATA'] + os.sep + "textme.ini"
+        location = os.environ["LOCALAPPDATA"] + os.sep + "textme.ini"
 
     return location 
 
