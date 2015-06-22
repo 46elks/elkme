@@ -10,7 +10,7 @@ textme is a commandline utility to send sms from the terminal
 """
 
 from __future__ import print_function
-from config import read_config, generate_config
+from config import read_config, generate_config, default_config_location
 from elks import send_text 
 import argparse
 import os
@@ -77,7 +77,7 @@ def main():
     if args.configfile:
         conffile = os.path.expanduser(args.configfile)
     else:
-        conffile = os.environ['HOME'] + "/.textme"
+        conffile = default_config_location()
 
     conf = read_config(conffile)
 
