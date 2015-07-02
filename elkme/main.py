@@ -17,11 +17,6 @@ import os
 import sys
 import string
 
-try:
-    input = raw_input
-except NameError:
-    pass
-
 ELK = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
 /MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.
@@ -78,6 +73,12 @@ See `textme --help` for more information about textme"""
 
 def main():
     """Executed on run"""
+
+    try:
+        input = raw_input
+    except NameError:
+        pass
+
     args = parse_args()
 
     if args.configfile:
