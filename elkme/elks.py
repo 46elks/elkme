@@ -7,19 +7,27 @@
 
 from __future__ import print_function
 from base64 import b64encode
-from urllib import urlencode
+try:
+    from urllib import urlencode
+    from urllib2 import HTTPError, urlopen, Request
+except ImportError:
+    from urllib.parse import urlencode
+    from urllib.error import HTTPError
+    from urllib.request import urlopen, Request
 import json
-import urllib2
 import sys
+from helpers import b, s
 
 def query_api(username, password, data, endpoint="SMS"):
-    auth = 'Basic ' + b64encode(username + ':' + password)
-    conn = urllib2.Request("https://api.46elks.com/a1/" + endpoint,
-                           urlencode(data))
+    conn = Request("https://api.46elks.com/a1/" + endpoint,
+                           b(urlencode(data)))
+
+    auth = b('Basic ') + b64encode(b(username + ':' + password))
     conn.add_header('Authorization', auth)
+        
     try:
-        response = urllib2.urlopen(conn)
-    except urllib2.HTTPError as err:
+        response = urlopen(conn)
+    except HTTPError as err:
         print(err)
         print("\nSending didn't succeed :(")
         exit(-2)
@@ -67,9 +75,9 @@ def send_text(conf, message):
     response = query_api(conf["username"], conf["password"], sms)
 
     if 'debug' in conf:
-        print(response)
+        print(s(response))
     elif 'verbose' in conf:
-        retval = json.loads(response)
+        retval = json.loads(s(response))
 
         if len(message) > 160:
             print(message)

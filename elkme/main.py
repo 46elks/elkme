@@ -14,7 +14,13 @@ from config import read_config, generate_config, default_config_location
 from elks import send_text 
 import argparse
 import os
+import sys
 import string
+
+try:
+    input = raw_input
+except NameError:
+    pass
 
 ELK = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
@@ -104,7 +110,7 @@ def main():
         message = ''
         try:
             while True:
-                message += raw_input()
+                message += input()
                 message += '\n'
         except EOFError:
             pass
