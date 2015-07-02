@@ -28,7 +28,8 @@ setup(name='textme',
       keywords="sms 46elks cli monitoring",
       entry_points={
             'console_scripts': [
-                'textme = textme.main:main'
+                'textme = elkme.main:main',
+                'elkme  = elkme.main:main'
                 ]
           },
       use_2to3 = False)
