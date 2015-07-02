@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2015 46elks AB <hello@46elks.com>
@@ -6,7 +6,7 @@
 # Licensed under the MIT License
 
 """
-textme is a commandline utility to send sms from the terminal
+elkme is a commandline utility to send sms from the terminal
 """
 
 from __future__ import print_function
@@ -53,23 +53,22 @@ MMMMMMMMMMMMMMMBYMMJOHANNESLMMOFMM46ELKSMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
 HELPTEXT = """
 Send a text message using the commandline powered by the 46elks
-API available from https://www.46elks.com. The tool reads it's configuration
-from a colon separated file located in ~/.textme or from commandline.
+API available from https://www.46elks.com.
 textme also supports pipes
 """
 
 USAGE = """Hello,
-textme is a tool for sending text messages using the commandline.
+elkme is a tool for sending text messages using the commandline.
 
-To use textme, you need to have an account on 46elks at https://46elks.com and
+To use elkme, you need to have an account on 46elks at https://46elks.com and
 login to your dashboard to receive your API username and password.
 
-Run `textme "Hello internet" -u APIUSERNAME -p APIPASSWORD -t +46700000000` to
+Run `elkme "Hello internet" -u APIUSERNAME -p APIPASSWORD -t +46700000000` to
 send a text message from commandline. That's it. (oh, and don't forget to
 add --saveconf so that you don't have to enter the settings every time you
 run the application)
 
-See `textme --help` for more information about textme"""
+See `elkme --help` for more information about elkme"""
 
 def main():
     """Executed on run"""
@@ -161,8 +160,7 @@ def parse_args():
                         Generates a configuration file from the commandline
                         options and exits.""")
     parser.add_argument('-c', '--config', dest='configfile',
-                        help="""Location of the configuration file
-                        (default ~/.textme)""")
+                        help="""Location of the custom configuration file""")
     return parser.parse_args()
 
 if __name__ == '__main__':

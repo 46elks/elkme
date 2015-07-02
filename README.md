@@ -36,5 +36,7 @@ to = +46700000000
 
 ## ToDo
 
-- [x] Move configuration to "correct" location(s) depending on OS
-- [x] Add quiet mode
+- [x] Port to Python 3
+- [ ] Write a covering test suite
+- [ ] Add support for calls
+

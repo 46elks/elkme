@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2015 46elks AB <hello@46elks.com>
@@ -14,19 +14,20 @@ import sys
 import os
 import platform
 
-def default_config_location():
+def default_config_location(Filename="textme"):
+    # TODO Migrate to elkme
     home = os.path.expanduser('~')
-    location = home + os.sep +  ".textme"
+    location = home + os.sep +  "." + Filename
 
     if platform.system() == "Darwin":
         location = home + os.sep + "Library" + os.sep +\
-        "Application Support" + os.sep + "textme"
+        "Application Support" + os.sep + Filename
     elif platform.system() == "Linux":
-        location = home + os.sep + ".config" + os.sep + "textme"
+        location = home + os.sep + ".config" + os.sep + Filename
     elif platform.system() == "Windows":
         # Might break on Windows <= XP
         # That's ok, since XP is no longer supported by MSFT
-        location = os.environ["LOCALAPPDATA"] + os.sep + "textme.ini"
+        location = os.environ["LOCALAPPDATA"] + os.sep + Filename + ".ini"
 
     return location 
 
