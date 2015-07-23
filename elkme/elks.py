@@ -43,7 +43,7 @@ def send_text(conf, message):
     """Sends a text message to a configuration conf containing the message in
     the message paramter"""
     if not 'from' in conf:
-        conf["from"] = 'textme'
+        conf["from"] = 'elkme'
 
     missing = ''
     if 'username' not in conf:

@@ -1,20 +1,20 @@
-.TH TEXTME 1 "JUNE 2015" "textme 0.1.1a1" "User Manuals"
+.TH ELKME 1 "JULY 2015" "elkme 0.2.3" "User Manuals"
 .SH NAME
-textme \- the command-line sms interface
+elkme \- the command-line sms interface
 
 .SH SYNOPSIS
-.B textme.py [-h] [-v] [-q] [-f \fIfile\fB] [-t \fITO\fB] [-s \fISENDER\fB] [-u
+.B elkme.py [-h] [-v] [-q] [-f \fIfile\fB] [-t \fITO\fB] [-s \fISENDER\fB] [-u
 \fI USERNAME\fB] [-p \fIPASSWORD\fB] [--saveconf] [-c \fICONFIGFILE\fB] [
 \fImessage \fB[\fImessage ...\fB]]
 
 .SH DESCRIPTION
-.B textme
+.B elkme
 is an application for sending text messages with the
 command line using the 46elks API from https://46elks.com
 
 .SH OPTIONS
 .IP "-h, --help"
-Show an overview of the features of textme and then exits
+Show an overview of the features of elkme and then exits
 .IP "-v, --verbose"
 Show debug output, this will display advanced information about the query
 to the user
@@ -39,20 +39,16 @@ Your API password for 46elks which is a secret key found in the
 46elks dashboard that can be used to authenticate your API calls to the server
 togheter with the API username. Make sure to keep your password a secret.
 .IP --saveconf
-Saves the current configuration to ~/.textme or the configuration file provided
-using \fI-c\fR if present. This allows the user to save settings and not have
-to enter them every time they run textme.
-.B saveconf
-supports saving
-.I --to
-,
-.I --sender
-,
-.I --username
-and
-.I --password
+Saves the current configuration to default location or the configuration 
+location provided using \fI-c\fR if present.
+This allows the user to save settings and not have to enter them every time
+they run elkme.
+
+\fBsaveconf\fR supports saving \fI--to\fR, \fI--sender\fR,
+\fI--username\fR and \fI--password\fR
+
 .IP "-c CONFIGFILE, --config CONFIGFILE"
-Read settings from specified file instead of from ~/.textme
+Read settings from specified file instead of from ~/.elkme
 
 .SH COPYRIGHT
 Licensed under the MIT license.
