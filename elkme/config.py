@@ -14,22 +14,27 @@ import sys
 import os
 import platform
 
+
 def default_config_location(Filename="textme"):
     # TODO Migrate to elkme
     home = os.path.expanduser('~')
-    location = home + os.sep +  "." + Filename
+    location = home + os.sep + "." + Filename
 
     if platform.system() == "Darwin":
-        location = home + os.sep + "Library" + os.sep +\
-        "Application Support" + os.sep + Filename
+        path = home + os.sep + "Library" + os.sep + "Application Support"\
+                + os.sep
+        location = path + Filename
     elif platform.system() == "Linux":
-        location = home + os.sep + ".config" + os.sep + Filename
+        path = home + os.sep + ".config" + os.sep
+        location = path + Filename
+        if not os.path.isdir(path):
+            os.mkdir(path)
     elif platform.system() == "Windows":
         # Might break on Windows <= XP
         # That's ok, since XP is no longer supported by MSFT
         location = os.environ["LOCALAPPDATA"] + os.sep + Filename + ".ini"
+    return location
 
-    return location 
 
 def read_config(path, section="46elks"):
     """Reads configuration from a configuration file using the
@@ -46,6 +51,7 @@ def read_config(path, section="46elks"):
     except ConfigParser.NoSectionError:
         return {}
     return settings
+
 
 def generate_config(conf, section="46elks"):
     """

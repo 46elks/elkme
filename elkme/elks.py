@@ -18,13 +18,14 @@ import json
 import sys
 from helpers import b, s
 
+
 def query_api(username, password, data, endpoint="SMS"):
     conn = Request("https://api.46elks.com/a1/" + endpoint,
-                           b(urlencode(data)))
+                   b(urlencode(data)))
 
     auth = b('Basic ') + b64encode(b(username + ':' + password))
     conn.add_header('Authorization', auth)
-        
+
     try:
         response = urlopen(conn)
     except HTTPError as err:
@@ -33,16 +34,18 @@ def query_api(username, password, data, endpoint="SMS"):
         exit(-2)
     return response.read()
 
+
 def validate_number(number):
     if number[0] == '+':
         return True
     else:
         raise Exception("Invalid phonenumber. Must be of format +CCXXXXXXXX")
 
+
 def send_text(conf, message):
     """Sends a text message to a configuration conf containing the message in
     the message paramter"""
-    if not 'from' in conf:
+    if 'from' not in conf:
         conf["from"] = 'elkme'
 
     missing = ''
@@ -54,7 +57,7 @@ def send_text(conf, message):
         missing += "'to' "
     if missing:
         print("You need to provide API username, password and a recipient",
-            file=sys.stderr)
+              file=sys.stderr)
         print("Error:", missing, "missing", file=sys.stderr)
         exit(-3)
 
