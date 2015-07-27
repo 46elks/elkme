@@ -16,7 +16,7 @@ except ImportError:
     from urllib.request import urlopen, Request
 import json
 import sys
-from helpers import b, s
+from helpers import b, s, parse_payload
 
 
 def query_api(username, password, data, endpoint="SMS"):
@@ -88,4 +88,27 @@ def send_text(conf, message):
             print("Sent first 160 characters to " + retval['to'])
         else:
             print('Sent "' + retval['message'] + '" to ' + retval['to'])
+
+
+def make_call(conf, payload):
+    voice_start = parse_payload(payload)
+    if 'debug' in conf:
+        print(voice_start)
+
+    try:
+        call = {
+            'from': conf['from'],
+            'to': conf['to'],
+            'voice_start': voice_start
+        }
+
+        response = query_api(conf['username'], conf['password'], call, 'Calls')
+        if 'debug' in conf:
+            print(s(response))
+        elif 'verbose' in conf:
+            retval = json.loads(s(response))
+            print('Made connection to ' + conf['to'])
+    except KeyError as e:
+        print('Missing one or more arguments necessary to make a connection:')
+        print(e)
 
