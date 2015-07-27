@@ -15,8 +15,7 @@ import os
 import platform
 
 
-def default_config_location(Filename="textme"):
-    # TODO Migrate to elkme
+def default_config_location(Filename="elkme"):
     home = os.path.expanduser('~')
     location = home + os.sep + "." + Filename
 
@@ -33,6 +32,12 @@ def default_config_location(Filename="textme"):
         # Might break on Windows <= XP
         # That's ok, since XP is no longer supported by MSFT
         location = os.environ["LOCALAPPDATA"] + os.sep + Filename + ".ini"
+
+    # Migration if textme-conffile exists but not elkme
+    if Filename == "elkme" and not os.path.isfile(location):
+        oldconf = default_config_location("textme")
+        if os.path.isfile(oldconf):
+            os.rename(oldconf, location)
     return location
 
 

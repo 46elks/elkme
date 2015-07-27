@@ -91,6 +91,7 @@ def main():
         conf['verbose'] = True
     if args.verbose >= 1 and args.quiet < 1:
         conf['debug'] = True
+        print("Reading configuration from %s" % conffile)
     if args.to:
         conf['to'] = args.to
     if args.sender:
