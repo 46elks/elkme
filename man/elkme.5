@@ -1,0 +1,38 @@
+.TH ELKME 5 "JULY 2015" "elkme 0.2.3" "User Manuals"
+.SH NAME
+.B elkme 
+-- configuration file for the elkme(1) application
+
+.SH DESCRIPTION
+The \fBelkme\fR file contains information about authentication and default
+receiver/sender for the \fBelkme(1)\fR application. The file currently only
+supports the 46elks API and is in a .ini-like format.
+
+The file has a header ``[46elks]'' followed by one or more of the following:
+
+.RS
+username
+.br
+password
+.br
+from
+.br
+to
+.RE
+
+These items each have a value which is separated from the value using ``=''
+and a ``#'' indicates a comment.
+
+.SH FILES
+\fB/etc/elkme\fR TODO
+.br
+\fB~/.elkme\fR On generic platforms
+.br
+\fB~/.config/elkme\fR on Linux-systems
+.br
+\fB~/Library/Application Support/elkme\fR on Darwin-based systems (i.e. Mac OS X)
+.br
+\fB%APPDATA%/elkme.ini\fR on Windows-systems (unsupported)
+
+.SH SEE ALSO
+elkme(1)
