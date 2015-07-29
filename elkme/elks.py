@@ -19,9 +19,12 @@ import sys
 from helpers import b, s, parse_payload
 
 
-def query_api(username, password, data, endpoint="SMS"):
-    conn = Request("https://api.46elks.com/a1/" + endpoint,
-                   b(urlencode(data)))
+def query_api(username, password, data, endpoint='SMS'):
+    api_url = "https://api.46elks.com/a1/%s" % endpoint
+    if data:
+        conn = Request(api_url, b(urlencode(data)))
+    else:
+        conn = Request(api_url)
 
     auth = b('Basic ') + b64encode(b(username + ':' + password))
     conn.add_header('Authorization', auth)
@@ -111,4 +114,29 @@ def make_call(conf, payload):
     except KeyError as e:
         print('Missing one or more arguments necessary to make a connection:')
         print(e)
+
+
+def my_user(conf):
+    response = query_api(conf['username'], conf['password'], None, 'Me')
+    if 'debug' in conf:
+        print(s(response))
+    elif 'verbose' in conf:
+        retval = json.loads(s(response))
+        for key in retval:
+            print('%s: %s' % (key, retval[key]))
+    return s(response)
+
+
+def my_numbers(conf):
+    response = query_api(conf['username'], conf['password'], None, 'Numbers')
+    if 'debug' in conf:
+        print(s(response))
+    elif 'verbose' in conf:
+        retval = json.loads(s(response))
+        if 'showall' in conf:
+            numbers = retval['data']
+        else:
+            numbers = filter(lambda num: num['active'] == 'yes', retval['data'])
+        map(lambda num: print(num['number']), numbers)
+    return s(response)
 
