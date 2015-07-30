@@ -137,6 +137,8 @@ def my_numbers(conf):
             numbers = retval['data']
         else:
             numbers = filter(lambda num: num['active'] == 'yes', retval['data'])
-        map(lambda num: print(num['number']), numbers)
+        numbers = list(map(lambda num: num['number'], numbers))
+        for number in numbers:
+            print(number)
     return s(response)
 
