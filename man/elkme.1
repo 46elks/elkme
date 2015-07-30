@@ -1,11 +1,20 @@
-.TH ELKME 1 "JULY 2015" "elkme 0.2.3" "User Manuals"
+.TH ELKME 1 "JULY 2015" "elkme 0.3.0" "User Manuals"
 .SH NAME
 elkme \- the command-line sms interface
 
 .SH SYNOPSIS
-.B elkme.py [-h] [-v] [-q] [-f \fIfile\fB] [-t \fITO\fB] [-s \fISENDER\fB] [-u
-\fI USERNAME\fB] [-p \fIPASSWORD\fB] [--saveconf] [-c \fICONFIGFILE\fB] [
-\fImessage \fB[\fImessage ...\fB]]
+.B elkme.py [-h|--help]
+.br
+.B elkme.py [-v] [-q] [-t \fITO\fB] [-s \fISENDER\fB] [-u \fIUSERNAME\fB]
+[-p \fIPASSWORD\fB] [--saveconf] [-c \fICONFIGFILE\fB] [--call] -f \fIfile\fB
+.br
+.B elkme.py [-v] [-q] [-t \fITO\fB] [-s \fISENDER\fB] [-u \fIUSERNAME\fB]
+[-p \fIPASSWORD\fB] [--saveconf] [-c \fICONFIGFILE\fB] [--call]
+\fImessage\fB [\fImessage ...\fB]
+.br
+.B elkme.py --me
+.br
+.B elkme.py --numbers
 
 .SH DESCRIPTION
 .B elkme
@@ -39,7 +48,7 @@ Your API password for 46elks which is a secret key found in the
 46elks dashboard that can be used to authenticate your API calls to the server
 togheter with the API username. Make sure to keep your password a secret.
 .IP --saveconf
-Saves the current configuration to default location or the configuration 
+Saves the current configuration to default location or the configuration
 location provided using \fI-c\fR if present.
 This allows the user to save settings and not have to enter them every time
 they run elkme.
@@ -49,6 +58,28 @@ they run elkme.
 
 .IP "-c CONFIGFILE, --config CONFIGFILE"
 Read settings from specified file instead of from ~/.elkme
+.IP "--call, --dial"
+Make a call instead of sending a text message (default behavior).
+.br
+Calls have two different formats for the payload to initialize calls, either
+the "simple format" or raw json, see the \fICALL FORMAT\fR section for more
+information on how to make a call.
+.IP --me
+Show information about your 46elks account.
+.IP --numbers
+Show all your active 46elks numbers as a newline separated list.
+Set \fImessage\fR to \fBall\fR to show the inactive numbers as well 
+
+.SH "CALL FORMAT"
+There are two different formats for the call, either you can use the simple
+or the JSON format.
+.IP "Simple format"
+Available payloads for the simple format are single command only and looks like
+    connect +46700000000
+    play http://url.to.file.example.com/file.{mp3|wav}
+.IP "JSON Format"
+See http://www.46elks.com/docs#voice-calls for documentation on the JSON
+format commands.
 
 .SH COPYRIGHT
 Licensed under the MIT license.
@@ -58,4 +89,4 @@ This tool is developed by Emil Tullstedt <emil@46elks.com> and has secret
 elk superpowers.
 
 .SH FILES
-See \fBelkme(5)\fR 
+See \fBelkme(5)\fR

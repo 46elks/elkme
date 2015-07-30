@@ -4,7 +4,8 @@ elkme
 *Command-line texting service provided by 46elks*
 
 This tool is still quite rough, and may behave in strange, un-accounted for
-behaviors.
+behaviors. It is also prone for random breaking changes, although we'll
+try to keep that to a minimum ;)
 
 ## Basic usage
 
@@ -38,5 +39,5 @@ to = +46700000000
 
 - [x] Port to Python 3
 - [ ] Write a covering test suite
-- [ ] Add support for calls
+- [x] Add support for calls
 
