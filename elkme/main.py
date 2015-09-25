@@ -11,7 +11,7 @@ elkme is a commandline utility to send sms from the terminal
 
 from __future__ import print_function
 from config import read_config, generate_config, default_config_location
-from elks import send_text, make_call, my_user, my_numbers
+from elks import Elks
 import argparse
 import os
 import sys
@@ -125,14 +125,16 @@ def main():
         if not message:
             exit(0)
 
+    elks_conn = Elks(conf)
+
     if args.me:
-        my_user(conf)
+        elks_conn.my_user(conf)
         exit(0)
     if args.numbers:
         if message:
             if 'all' in message:
                 conf['showall'] = True
-        my_numbers(conf)
+        elks_conn.my_numbers(conf)
         exit(0)
 
     if not message:
@@ -143,9 +145,9 @@ def main():
         print(ELK)
 
     if args.call:
-        make_call(conf, message)
+        elks_conn.make_call(conf, message)
     else:
-        send_text(conf, message)
+        elks_conn.send_text(conf, message)
 
 
 def parse_args():

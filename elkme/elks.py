@@ -18,127 +18,131 @@ import json
 import sys
 from helpers import b, s, parse_payload
 
+class Elks:
+    username = None
+    password = None
+    api_url = "https://api.46elks.com/a1/%s"
 
-def query_api(username, password, data, endpoint='SMS'):
-    api_url = "https://api.46elks.com/a1/%s" % endpoint
-    if data:
-        conn = Request(api_url, b(urlencode(data)))
-    else:
-        conn = Request(api_url)
+    def __init__(self, conf):
+        missing = ''
+        if not 'username' in conf:
+            missing += ' username'
+        if not 'password' in conf:
+            missing += ' password'
+        if missing:
+            print("Error: %s missing" % missing, file=sys.stderr)
+            exit(-3)
+        self.username = conf['username']
+        self.password = conf['password']
 
-    auth = b('Basic ') + b64encode(b(username + ':' + password))
-    conn.add_header('Authorization', auth)
-
-    try:
-        response = urlopen(conn)
-    except HTTPError as err:
-        print(err)
-        print("\nSending didn't succeed :(")
-        exit(-2)
-    return response.read()
-
-
-def validate_number(number):
-    if number[0] == '+':
-        return True
-    else:
-        raise Exception("Invalid phonenumber. Must be of format +CCXXXXXXXX")
-
-
-def send_text(conf, message):
-    """Sends a text message to a configuration conf containing the message in
-    the message paramter"""
-    if 'from' not in conf:
-        conf["from"] = 'elkme'
-
-    missing = ''
-    if 'username' not in conf:
-        missing += "'username' "
-    if 'password' not in conf:
-        missing += "'password' "
-    if 'to' not in conf:
-        missing += "'to' "
-    if missing:
-        print("You need to provide API username, password and a recipient",
-              file=sys.stderr)
-        print("Error:", missing, "missing", file=sys.stderr)
-        exit(-3)
-
-    validate_number(conf["to"])
-
-    if not isinstance(message, str):
-        message = " ".join(message)
-
-    sms = {
-        'from': conf["from"],
-        'to': conf["to"],
-        'message': message[:159]
-    }
-
-    if 'debug' in conf:
-        print(sms)
-
-    response = query_api(conf["username"], conf["password"], sms)
-
-    if 'debug' in conf:
-        print(s(response))
-    elif 'verbose' in conf:
-        retval = json.loads(s(response))
-
-        if len(message) > 160:
-            print(message)
-            print("----")
-            print("Sent first 160 characters to " + retval['to'])
+    def query_api(self, data=None, endpoint='SMS'):
+        url = self.api_url % endpoint
+        if data:
+            conn = Request(url, b(urlencode(data)))
         else:
-            print('Sent "' + retval['message'] + '" to ' + retval['to'])
+            conn = Request(url)
+
+        auth = b('Basic ') + b64encode(b(self.username + ':' + self.password))
+        conn.add_header('Authorization', auth)
+
+        try:
+            response = urlopen(conn)
+        except HTTPError as err:
+            print(err)
+            print("\nSending didn't succeed :(")
+            exit(-2)
+        return response.read()
+
+    def validate_number(self, number):
+        if number[0] == '+':
+            return True
+        else:
+            raise Exception("Phone number must be of format +CCCXXX...")
 
 
-def make_call(conf, payload):
-    voice_start = parse_payload(payload)
-    if 'debug' in conf:
-        print(voice_start)
+    def send_text(self, conf, message):
+        """Sends a text message to a configuration conf containing the message
+        in the message paramter"""
+        if 'from' not in conf:
+            conf["from"] = 'elkme'
 
-    try:
-        call = {
-            'from': conf['from'],
-            'to': conf['to'],
-            'voice_start': voice_start
+        if 'to' not in conf:
+            print('Error: to field is missing', file=sys.stderr)
+            raise Exception('Missing to')
+
+        self.validate_number(conf["to"])
+
+        if not isinstance(message, str):
+            message = " ".join(message)
+
+        sms = {
+            'from': conf["from"],
+            'to': conf["to"],
+            'message': message[:159]
         }
 
-        response = query_api(conf['username'], conf['password'], call, 'Calls')
+        if 'debug' in conf:
+            print(sms)
+
+        response = self.query_api(sms)
+
         if 'debug' in conf:
             print(s(response))
         elif 'verbose' in conf:
             retval = json.loads(s(response))
-            print('Made connection to ' + conf['to'])
-    except KeyError as e:
-        print('Missing one or more arguments necessary to make a connection:')
-        print(e)
+
+            if len(message) > 160:
+                print(message)
+                print("----")
+                print("Sent first 160 characters to " + retval['to'])
+            else:
+                print('Sent "' + retval['message'] + '" to ' + retval['to'])
 
 
-def my_user(conf):
-    response = query_api(conf['username'], conf['password'], None, 'Me')
-    if 'debug' in conf:
-        print(s(response))
-    elif 'verbose' in conf:
-        retval = json.loads(s(response))
-        for key in retval:
-            print('%s: %s' % (key, retval[key]))
-    return s(response)
+    def make_call(self, conf, payload):
+        voice_start = parse_payload(payload)
+        if 'debug' in conf:
+            print(voice_start)
+
+        try:
+            call = {
+                'from': conf['from'],
+                'to': conf['to'],
+                'voice_start': voice_start
+            }
+
+            response = self.query_api(call, 'Calls')
+            if 'debug' in conf:
+                print(s(response))
+            elif 'verbose' in conf:
+                retval = json.loads(s(response))
+                print('Made connection to ' + conf['to'])
+        except KeyError as e:
+            print('Cannot establish connection:')
+            print(e)
 
 
-def my_numbers(conf):
-    response = query_api(conf['username'], conf['password'], None, 'Numbers')
-    if 'debug' in conf:
-        print(s(response))
-    elif 'verbose' in conf:
-        retval = json.loads(s(response))
-        if 'showall' in conf:
-            numbers = retval['data']
-        else:
-            numbers = filter(lambda num: num['active'] == 'yes', retval['data'])
-        numbers = list(map(lambda num: num['number'], numbers))
-        for number in numbers:
-            print(number)
-    return s(response)
+    def my_user(self, conf={'verbose': True}):
+        response = self.query_api(endpoint='Me')
+        if 'debug' in conf:
+            print(s(response))
+        elif 'verbose' in conf:
+            retval = json.loads(s(response))
+            for key in retval:
+                print('%s: %s' % (key, retval[key]))
+
+
+    def my_numbers(self, conf={'verbose': True}):
+        response = self.query_api(endpoint='Numbers')
+        if 'debug' in conf:
+            print(s(response))
+        elif 'verbose' in conf:
+            numbers = json.loads(s(response))['data']
+            if 'showall' in conf:
+                numbers = [num['number'] for num in numbers]
+            else:
+                numbers = [num['number'] for num in numbers
+                            if num['active'] == 'yes']
+            for number in numbers:
+                print(number)
 
