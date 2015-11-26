@@ -16,7 +16,7 @@ except ImportError:
     from urllib.request import urlopen, Request
 import json
 import sys
-from helpers import b, s, parse_payload
+from helpers import b, s, parse_payload, requires_elements
 
 class Elks:
     username = None
@@ -24,14 +24,7 @@ class Elks:
     api_url = "https://api.46elks.com/a1/%s"
 
     def __init__(self, conf):
-        missing = ''
-        if not 'username' in conf:
-            missing += ' username'
-        if not 'password' in conf:
-            missing += ' password'
-        if missing:
-            print("Error: %s missing" % missing, file=sys.stderr)
-            exit(-3)
+        requires_elements(['username', 'password'], conf)
         self.username = conf['username']
         self.password = conf['password']
 
@@ -53,6 +46,7 @@ class Elks:
             exit(-2)
         return response.read()
 
+
     def validate_number(self, number):
         if number[0] == '+':
             return True
@@ -65,12 +59,8 @@ class Elks:
         in the message paramter"""
         if 'from' not in conf:
             conf["from"] = 'elkme'
-
-        if 'to' not in conf:
-            print('Error: to field is missing', file=sys.stderr)
-            raise Exception('Missing to')
-
-        self.validate_number(conf["to"])
+        requires_elements(['to'], conf)
+        self.validate_number(conf['to'])
 
         if not isinstance(message, str):
             message = " ".join(message)
@@ -93,33 +83,28 @@ class Elks:
 
             if len(message) > 160:
                 print(message)
-                print("----")
-                print("Sent first 160 characters to " + retval['to'])
+                print('----')
+                print('Sent first 160 characters to ' + retval['to'])
             else:
                 print('Sent "' + retval['message'] + '" to ' + retval['to'])
 
 
     def make_call(self, conf, payload):
+        requires_elements(['from', 'to'], conf)
         voice_start = parse_payload(payload)
         if 'debug' in conf:
             print(voice_start)
-
-        try:
-            call = {
-                'from': conf['from'],
-                'to': conf['to'],
-                'voice_start': voice_start
-            }
-
-            response = self.query_api(call, 'Calls')
-            if 'debug' in conf:
-                print(s(response))
-            elif 'verbose' in conf:
-                retval = json.loads(s(response))
-                print('Made connection to ' + conf['to'])
-        except KeyError as e:
-            print('Cannot establish connection:')
-            print(e)
+        call = {
+            'from': conf['from'],
+            'to': conf['to'],
+            'voice_start': voice_start
+        }
+        response = self.query_api(call, 'Calls')
+        if 'debug' in conf:
+            print(s(response))
+        elif 'verbose' in conf:
+            retval = json.loads(s(response))
+            print('Made connection to ' + conf['to'])
 
 
     def my_user(self, conf={'verbose': True}):
