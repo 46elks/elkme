@@ -125,7 +125,11 @@ def main():
         if not message:
             exit(0)
 
-    elks_conn = Elks(conf)
+    invalid_conf = False
+    try:
+      elks_conn = Elks(conf)
+    except KeyError:
+      invalid_conf = True 
 
     if args.me:
         elks_conn.my_user(conf)
@@ -143,6 +147,11 @@ def main():
 
     if args.verbose >= 2 or (message[0:3][0] == 'elks'):
         print(ELK)
+
+    if invalid_conf:
+      print(USAGE, file=sys.stderr)
+      print("\n\nYour configuration is invalid", file=sys.stderr)
+      exit(-1)
 
     if args.call:
         elks_conn.make_call(conf, message)

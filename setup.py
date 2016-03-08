@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='elkme',
-      version='0.3.2',
+      version='0.3.3',
       description='Command-line tool for sending SMS',
       long_description="""elkme is a command-line tool for sending SMS using
       the 46elks platfrom from the terminal.""",
