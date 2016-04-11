@@ -25,7 +25,10 @@ def parse_payload(payload):
         json.loads(payload)
     except ValueError:
         kv = payload.split(' ', 1)
-        payload = '{"%s": "%s"}' % (kv[0], kv[1])
+        if len(kv) > 1:
+          payload = '{"%s": "%s"}' % (kv[0], kv[1])
+        else:
+          payload = '%s' % kv[0]
 
     return payload
 

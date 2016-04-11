@@ -27,6 +27,7 @@ class Elks:
         requires_elements(['username', 'password'], conf)
         self.username = conf['username']
         self.password = conf['password']
+        self.api_url = '%s/' % (conf['api_url']) + '%s'
 
     def query_api(self, data=None, endpoint='SMS'):
         url = self.api_url % endpoint
