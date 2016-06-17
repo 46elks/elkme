@@ -23,7 +23,7 @@ class Elks:
     password = None
     api_url = "https://api.46elks.com/a1/%s"
 
-    def __init__(self, conf):
+    def __init__(self, conf={}):
         default_base_url = 'https://api.46elks.com/a1'
         self.username = conf.get('username', None)
         self.password = conf.get('password', None)
@@ -51,13 +51,13 @@ class Elks:
     def validate_number(self, number):
         if not isinstance(number, str):
             raise Exception('Phone number may not be empty')
-        if number[0] == '+':
+        if number[0] == '+' and len(number) > 2 and len(number) < 16:
             return True
         else:
             raise Exception("Phone number must be of format +CCCXXX...")
 
 
-    def format_sms_payload(self, message, to, sender, options=[]):
+    def format_sms_payload(self, message, to, sender='elkme', options=[]):
         self.validate_number(to)
 
         if not isinstance(message, str):
