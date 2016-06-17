@@ -32,12 +32,3 @@ def parse_payload(payload):
 
     return payload
 
-def requires_elements(xs, dictionary):
-    missing_values = []
-    for x in xs:
-        if x not in dictionary:
-            missing_values.append(x)
-    if missing_values:
-        err_msg = ', '.join(missing_values)
-        raise KeyError('Missing values %s' % (err_msg))
-

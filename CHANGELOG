@@ -1,0 +1,17 @@
+# Change Log
+
+## [0.4.0] - UNRELEASED
+### Added
+- Broke out elks.format_sms_payload from elks.send_sms to support unit testing
+- Broke out elks.format_call_payload from elks.make_call to support unit testing
+- Support for SMS sending options in the SDK
+
+### Changed
+- elks.my_numbers -> elks.list_numbers
+- elks.my_user -> elks.list_user
+
+### Removed
+- Support for legacy `textme` command
+- elks.requires_elements
+- Printing within the SDK
+- TEMPORARY Debug messages within the SDK

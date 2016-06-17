@@ -16,7 +16,7 @@ except ImportError:
     from urllib.request import urlopen, Request
 import json
 import sys
-from helpers import b, s, parse_payload, requires_elements
+from helpers import b, s, parse_payload
 
 class Elks:
     username = None
@@ -24,10 +24,10 @@ class Elks:
     api_url = "https://api.46elks.com/a1/%s"
 
     def __init__(self, conf):
-        requires_elements(['username', 'password'], conf)
-        self.username = conf['username']
-        self.password = conf['password']
-        self.api_url = '%s/' % (conf['api_url']) + '%s'
+        default_base_url = 'https://api.46elks.com/a1'
+        self.username = conf.get('username', None)
+        self.password = conf.get('password', None)
+        self.api_url = '%s/' % (conf.get('api_url', default_base_url)) + '%s'
 
     def query_api(self, data=None, endpoint='SMS'):
         url = self.api_url % endpoint
@@ -49,86 +49,67 @@ class Elks:
 
 
     def validate_number(self, number):
+        if not isinstance(number, str):
+            raise Exception('Phone number may not be empty')
         if number[0] == '+':
             return True
         else:
             raise Exception("Phone number must be of format +CCCXXX...")
 
 
-    def send_text(self, conf, message):
-        """Sends a text message to a configuration conf containing the message
-        in the message paramter"""
-        if 'from' not in conf:
-            conf["from"] = 'elkme'
-        requires_elements(['to'], conf)
-        self.validate_number(conf['to'])
+    def format_sms_payload(self, message, to, sender, options=[]):
+        self.validate_number(to)
 
         if not isinstance(message, str):
             message = " ".join(message)
 
+        message = message.rstrip()
+
         sms = {
-            'from': conf["from"],
-            'to': conf["to"],
-            'message': message[:159]
+            'from': sender,
+            'to': to,
+            'message': message
         }
+        
+        for option in options:
+          if option not in ['dontlog', 'dryrun', 'flash']:
+            raise Exception('Option %s not supported' % option)
+          sms[option] = 'yes'
 
-        if 'debug' in conf:
-            print(sms)
+        return sms
 
-        response = self.query_api(sms)
+    def send_sms(self, message, to, sender='elkme', options=[]):
+        """Sends a text message to a configuration conf containing the message
+        in the message paramter"""
+        sms = self.format_sms_payload(message=message,
+            to=to,
+            sender=sender,
+            options=options)
+        return self.query_api(sms)
 
-        if 'debug' in conf:
-            print(s(response))
-        elif 'verbose' in conf:
-            retval = json.loads(s(response))
-
-            if len(message) > 160:
-                print(message)
-                print('----')
-                print('Sent first 160 characters to ' + retval['to'])
-            else:
-                print('Sent "' + retval['message'] + '" to ' + retval['to'])
-
-
-    def make_call(self, conf, payload):
-        requires_elements(['from', 'to'], conf)
+    def format_call_payload(self, payload, to, sender):
         voice_start = parse_payload(payload)
-        if 'debug' in conf:
-            print(voice_start)
+
         call = {
-            'from': conf['from'],
-            'to': conf['to'],
+            'from': sender,
+            'to': to,
             'voice_start': voice_start
         }
-        response = self.query_api(call, 'Calls')
-        if 'debug' in conf:
-            print(s(response))
-        elif 'verbose' in conf:
-            retval = json.loads(s(response))
-            print('Made connection to ' + conf['to'])
+        return call
 
+    def make_call(self, payload, to, sender):
+        call = self.format_call_payload(payload, to, sender)
+        return self.query_api(call, 'Calls')
 
-    def my_user(self, conf={'verbose': True}):
+    def list_user(self):
         response = self.query_api(endpoint='Me')
-        if 'debug' in conf:
-            print(s(response))
-        elif 'verbose' in conf:
-            retval = json.loads(s(response))
-            for key in retval:
-                print('%s: %s' % (key, retval[key]))
+        return json.loads(s(response))
 
-
-    def my_numbers(self, conf={'verbose': True}):
+    def list_numbers(self, all = False):
         response = self.query_api(endpoint='Numbers')
-        if 'debug' in conf:
-            print(s(response))
-        elif 'verbose' in conf:
-            numbers = json.loads(s(response))['data']
-            if 'showall' in conf:
-                numbers = [num['number'] for num in numbers]
-            else:
-                numbers = [num['number'] for num in numbers
-                            if num['active'] == 'yes']
-            for number in numbers:
-                print(number)
+        numbers = json.loads(s(response))['data']
+        if not all:
+            numbers = filter(lambda num: num['active'] == 'yes', numbers)
+        numbers = map(lambda num: num['number'], numbers)
+        return list(numbers)
 

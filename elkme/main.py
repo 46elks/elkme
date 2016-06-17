@@ -15,6 +15,8 @@ from elks import Elks
 import argparse
 import os
 import sys
+import json
+from helpers import b, s
 
 ELK = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
@@ -129,16 +131,17 @@ def main():
     try:
       elks_conn = Elks(conf)
     except KeyError:
-      invalid_conf = True 
+      invalid_conf = True
 
     if args.me:
-        elks_conn.my_user(conf)
+        elks_conn.list_user()
         exit(0)
     if args.numbers:
-        if message:
-            if 'all' in message:
-                conf['showall'] = True
-        elks_conn.my_numbers(conf)
+        if not message:
+          message = ''
+        numbers = elks_conn.list_numbers(all = 'all' in message)
+        for i, number in enumerate(numbers):
+          print("(%s) %s" % (i, number))
         exit(0)
 
     if not message:
@@ -154,10 +157,16 @@ def main():
       exit(-1)
 
     if args.call:
-        elks_conn.make_call(conf, message)
+        response = elks_conn.make_call(message,
+            conf.get('to', None),
+            conf.get('from', None))
+        if 'debug' in conf:
+            print(s(response))
+        elif 'verbose' in conf:
+            retval = json.loads(s(response))
+            print('Made connection to ' + conf['to'])
     else:
-        elks_conn.send_text(conf, message)
-
+        send_sms(elks_conn, conf, message)
 
 def parse_args():
     """Parse the arguments to the application"""
@@ -195,6 +204,24 @@ def parse_args():
     parser.add_argument('--numbers', action='store_true',
                         help="Show my numbers")
     return parser.parse_args()
+
+def send_sms(conn, conf, message):
+    sender = conf.get('from', 'elkme')
+    to = conf.get('to', None)
+
+    response = conn.send_sms(message[:159], to, sender)
+
+    if 'debug' in conf:
+        print(s(response))
+    elif 'verbose' in conf:
+        retval = json.loads(s(response))
+
+        if len(message) > 160:
+            print(message)
+            print('----')
+            print('Sent first 160 characters to ' + retval['to'])
+        else:
+            print('Sent "' + retval['message'] + '" to ' + retval['to'])
 
 if __name__ == '__main__':
     main()
