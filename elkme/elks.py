@@ -16,7 +16,7 @@ except ImportError:
     from urllib.request import urlopen, Request
 import json
 import sys
-from helpers import b, s, parse_payload
+from .helpers import b, s, parse_payload
 
 class Elks:
     username = None

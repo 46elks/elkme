@@ -10,13 +10,13 @@ elkme is a commandline utility to send sms from the terminal
 """
 
 from __future__ import print_function
-from config import read_config, generate_config, default_config_location
-from elks import Elks
+from .config import read_config, generate_config, default_config_location
+from .elks import Elks
 import argparse
 import os
 import sys
 import json
-from helpers import b, s
+from .helpers import b, s
 
 ELK = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
