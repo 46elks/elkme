@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.4] - 2016-07-26
+### Fixed
+- Added requests as a requirement for elkme
+
 ## [0.4.2] - 2016-07-26
 ### Changed
 - Internal format for the Elks class now takes a `requests` style auth tuple

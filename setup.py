@@ -14,7 +14,7 @@ setup(name='elkme',
       author_email='emil@46elks.com',
       license='MIT',
       packages = find_packages(),
-      install_reqs = ['requests>=2.10.0'],
+      install_requires = ['requests>=2.10.0'],
       tests_require = ['nose>=1.3.7'],
       classifiers=[
         'Development Status :: 4 - Beta',
