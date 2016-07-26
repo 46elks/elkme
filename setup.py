@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+from elkme.__init__ import __version__
 
 setup(name='elkme',
-      version='0.4.1',
+      version=__version__,
       description='Command-line tool and SDK for sending SMS',
       long_description="""elkme is a command-line tool for sending SMS using
       the 46elks platfrom from the terminal which doubles as an SDK to use
@@ -13,7 +14,8 @@ setup(name='elkme',
       author_email='emil@46elks.com',
       license='MIT',
       packages = find_packages(),
-      packages_dir = {'': 'elkme'},
+      install_reqs = ['requests>=2.10.0'],
+      tests_require = ['nose>=1.3.7'],
       classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',

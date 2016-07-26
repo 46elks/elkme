@@ -7,45 +7,40 @@
 
 from __future__ import print_function
 from base64 import b64encode
-try:
-    from urllib import urlencode
-    from urllib2 import HTTPError, urlopen, Request
-except ImportError:
-    from urllib.parse import urlencode
-    from urllib.error import HTTPError
-    from urllib.request import urlopen, Request
+import requests
+from requests.exceptions import HTTPError
 import json
 import sys
-from .helpers import b, s, parse_payload
+from .helpers import parse_payload
 
 class Elks:
-    username = None
-    password = None
+    auth = None
     api_url = "https://api.46elks.com/a1/%s"
 
-    def __init__(self, conf={}):
-        default_base_url = 'https://api.46elks.com/a1'
-        self.username = conf.get('username', None)
-        self.password = conf.get('password', None)
-        self.api_url = '%s/' % (conf.get('api_url', default_base_url)) + '%s'
+    def __init__(self, auth=None, api_url=None):
+        self.auth = auth
+        if api_url:
+            self.api_url = '%s/' % api_url + '%s'
 
     def query_api(self, data=None, endpoint='SMS'):
         url = self.api_url % endpoint
         if data:
-            conn = Request(url, b(urlencode(data)))
+            response = requests.post(
+                url,
+                data=data,
+                auth=self.auth
+            )
         else:
-            conn = Request(url)
-
-        auth = b('Basic ') + b64encode(b(self.username + ':' + self.password))
-        conn.add_header('Authorization', auth)
-
+            response = requests.get(
+                url,
+                auth=self.auth
+            )
         try:
-            response = urlopen(conn)
-        except HTTPError as err:
-            print(err)
-            print("\nSending didn't succeed :(")
-            exit(-2)
-        return response.read()
+            response.raise_for_status()
+        except HTTPError as e:
+            raise HTTPError('HTTP %s\n%s' %
+                    (response.status_code, response.text))
+        return response.text
 
 
     def validate_number(self, number):
@@ -98,16 +93,16 @@ class Elks:
         return call
 
     def make_call(self, payload, to, sender):
+        """ Make a call connection to the 46elks API.
+        Will be deprecated and replaced. """
         call = self.format_call_payload(payload, to, sender)
         return self.query_api(call, 'Calls')
 
-    def list_user(self):
-        response = self.query_api(endpoint='Me')
-        return json.loads(s(response))
-
     def list_numbers(self, all = False):
+        """ List numbers belonging to the current user.
+        Will be deprecated and replaced. """
         response = self.query_api(endpoint='Numbers')
-        numbers = json.loads(s(response))['data']
+        numbers = json.loads(response)['data']
         if not all:
             numbers = filter(lambda num: num['active'] == 'yes', numbers)
         numbers = map(lambda num: num['number'], numbers)

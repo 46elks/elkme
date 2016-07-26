@@ -12,11 +12,11 @@ elkme is a commandline utility to send sms from the terminal
 from __future__ import print_function
 from .config import read_config, generate_config, default_config_location
 from .elks import Elks
+from requests.exceptions import HTTPError
 import argparse
 import os
 import sys
 import json
-from .helpers import b, s
 
 ELK = """
   ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
@@ -71,6 +71,11 @@ run the application)
 
 See `elkme --help` for more information about elkme"""
 
+small_elk = """\
+                                    \W/
+                                    co\ 
+                                      OOOOO´
+                                      || /\ """
 
 def main():
     """Executed on run"""
@@ -81,6 +86,12 @@ def main():
         pass
 
     args = parse_args()
+    if args.version:
+        from .__init__ import __version__, __release_date__
+        print('elkme %s (release date %s)' % (__version__, __release_date__))
+        print('(c) 2015-2016 46elks AB <hello@46elks.com>')
+        print(small_elk)
+        exit(0)
 
     if args.configfile:
         conffile = os.path.expanduser(args.configfile)
@@ -129,13 +140,11 @@ def main():
 
     invalid_conf = False
     try:
-      elks_conn = Elks(conf)
+      elks_conn = Elks(auth = (conf['username'], conf['password']),
+              api_url = conf.get('api_url'))
     except KeyError:
       invalid_conf = True
 
-    if args.me:
-        elks_conn.list_user()
-        exit(0)
     if args.numbers:
         if not message:
           message = ''
@@ -173,6 +182,8 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description=HELPTEXT,
         epilog="This application is powered by elks with superpowers!")
+    parser.add_argument('--version', action='store_true',
+                        help="Display elkme version and exit")
     parser.add_argument('-v', '--verbose', action='count',
                         help="Debug output", default=0)
     parser.add_argument('-q', '--quiet', action='count',
@@ -199,22 +210,25 @@ def parse_args():
     parser.add_argument('-c', '--config', dest='configfile',
                         help="""Location of the custom configuration file""")
     parser.add_argument('--call', '--dial', action='store_true', default=False,
-                        help="""Make a call""")
-    parser.add_argument('--me', action='store_true', help="User info")
+                        help="""Make a call [TO BE DEPRECATED]""")
     parser.add_argument('--numbers', action='store_true',
-                        help="Show my numbers")
+                        help="Show my numbers [TO BE DEPRECATED]")
     return parser.parse_args()
 
 def send_sms(conn, conf, message):
     sender = conf.get('from', 'elkme')
     to = conf.get('to', None)
 
-    response = conn.send_sms(message[:159], to, sender)
+    try:
+        response = conn.send_sms(message[:159], to, sender)
+    except HTTPError as e:
+        print(e)
+        return
 
     if 'debug' in conf:
-        print(s(response))
+        print(response)
     elif 'verbose' in conf:
-        retval = json.loads(s(response))
+        retval = json.loads(response)
 
         if len(message) > 160:
             print(message)
