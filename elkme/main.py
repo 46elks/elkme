@@ -170,9 +170,9 @@ def main():
             conf.get('to', None),
             conf.get('from', None))
         if 'debug' in conf:
-            print(s(response))
+            print(response)
         elif 'verbose' in conf:
-            retval = json.loads(s(response))
+            retval = json.loads(response)
             print('Made connection to ' + conf['to'])
     else:
         send_sms(elks_conn, conf, message)
