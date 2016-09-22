@@ -98,25 +98,31 @@ nav a:hover {
 }
 
 #content code {
-    margin: 1em;
+    margin: 2em 0;
     display: block;
     padding: 1.5em;
     background: #222222;
     color: #FFFFFF;
     font-size: .83em;
-    border: 4px #03A1CE solid;
     border-radius: 15px;
 }
 
 #content #asciinema-elkme-demo {
-    margin: 1em -1px;
+    margin: 2em 0;
 }
 
 #content .asciinema-terminal {
-    border: 4px #03A1CE solid;
     border-radius: 15px;
     padding: 1.5em;
     font-family: 'Source Code Pro', monospace;
+    font-size: .83em;
+    color: #FFFFFF;
+    background: #222222;
+    border-color: #222222;
+}
+
+#content .asciinema-terminal .fg-6 {
+    color: #FFC335;
 }
 
 #content code.output:before {
@@ -131,21 +137,22 @@ nav a:hover {
 }
 
 #content section p:not(:first-child) {
-    text-indent: 1em;
+    margin-top: 1.3em;
 }
 
 #content section p {
-    padding: 0 70px;
+    padding: 0 30px;
     margin-bottom: .3em;
 }
 
 #content h1,h2,h3,h4,h5,h6 {
     font-family: 'Source Code Pro', monospace;
-    margin: 1em 0;
+    margin: 2em 0 1em 0;
     text-align: center;
 }
 
 #content h1 {
+    margin-top: 2em;
     font-family: 'Playfair Display', Helvetica, Arial, serif; 
 }
 
