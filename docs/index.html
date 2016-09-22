@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>elkme CLI by 46elks</title>
+        <link href="css/main.css" type="text/css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="css/asciinema-player.css" />
+        <script src="scripts/asciinema-player.js"></script>
+    </head>
+
+    <body>
+        <nav>
+            <a href="https://46elks.com/" class="nounderline" id="elkslogo">
+                <img src="images/logo.png" alt="46elks" />
+            </a>
+
+            <a href="#elkme">elkme</a> |
+            <a href="#sdk">Python SDK</a> |
+            <a href="#preselks">About 46elks</a>
+            
+        </nav>
+
+        <div id="content">
+            <h1>The Elkme Suite</h1>
+
+            <section>
+                <p>
+                    Elkme is a set of tools to help you integrate SMS with your
+                    UNIX/Linux/macOS prompt and your Python applications and
+                    scripts.
+                </p>
+            </section>
+
+            <h2 class="cmd" id="elkme">elkme</h2>
+
+            <section>
+            <p>
+                <tt>elkme</tt> is a tool for empowering your UNIX® shell with
+                the ability to send SMS from the command-line.
+            </p>
+
+            <p>
+                Utilizing the <a href="https://www.46elks.com/">46elks API</a>
+                to conveniently send SMS from your command-line.
+                You can with minimal effort set up <tt>cron</tt> to send you
+                information about load, the latest podcast or the progress of
+                downloading 7½ hours of Norwegian trains (in HD)<sup id="fnm1"><a href="#fn1">1</a></sup>.
+            </p>
+            <p>
+                The demonstration below shows how easy it is to send your uptime
+                and load in a SMS using <tt>elkme</tt> after initial configuration.
+                
+            </p>
+            </section>
+
+            <div id="asciinema-elkme-demo" class="hide-controls"></div>
+            <script>
+asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height': 4, 'autoPlay': true});
+            </script>
+
+            <section>
+            <p>
+                The idea of <tt>elkme</tt> is to provide sysadmins, developers
+                and power users with a toolkit to communicate with any phone
+                anywhere at any time from a command-line. SMS is <strong>the</strong>
+                de facto standard for real-time notifications, and <tt>elkme</tt>
+                makes SMS as convenient and accessible as using <tt>cat</tt> or <tt>echo</tt>.
+            </p>
+            </section>
+
+            <h3>Installation</h3>
+            <section>
+            <p>
+                <tt>elkme</tt> is available as source on <a href="https://github.com/46elks/elkme">github.com/46elks/elkme</a>
+                and compatible with Python 2 and 3 (with <tt>requests</tt> installed).
+            </p>
+            <p>
+                You may also install <tt>elkme</tt> from the pypi package
+                <a href="https://pypi.python.org/pypi/elkme">elkme</a>
+                by using <tt>pip</tt>:
+            </p>
+
+            <code class="cmd root">
+                pip install elkme
+            </code>
+            </section>
+
+            <h3>Setup</h3>
+
+            <section>
+            <p>
+                Getting started with <tt>elkme</tt> by registering for a
+                <a href="https://www.46elks.com/">46elks</a> account and extracting
+                your API keys from the dashboard.
+            </p>
+
+            <code class="cmd">
+                elkme --saveconf -u <span class="highlight">(API key)</span> -p
+                <span class="highlight">(API secret)</span> --to
+                <span class="highlight">(Your Phonenumber)</span>
+                --from <span class="highlight">$(hostname)</span>
+            </code>
+
+            <p>
+                This saves your default details and you may start sending SMS from
+                your command-line, cronjobs and by utilizing the elkme Python SDK.
+            </p>
+
+            <code class="cmd">
+                elkme <span class="highlight">"Good morning, upper east side"</span>
+            </code>
+            </section>
+
+            <h2 id="sdk">elkme Python SDK</h2>
+            <section>
+                <p>
+                    <tt>elkme</tt> isn't just your new best friend when it comes
+                    to sending SMS from the command-line, it is also the reference
+                    implementation for connecting to the 46elks API from Python.
+                </p>
+                <p>
+                    <h4>Note:</h4>
+                    The <tt>elkme</tt> Python SDK is in early-beta and is prone
+                    to change with every release.
+                </p>
+            </section>
+
+            <h2 id="preselks">About 46elks</h2>
+            <section>
+                <h4>
+                Adding SMS and voice to your application or service should be
+                easy
+                </h4>
+            </section>
+
+            <footer>
+                <h2>Footnotes</h2>
+                <ul class="footnotes">
+                    <li id="fn1">
+                        <a href="#fnm1">Footnote 1</a> &mdash;
+                        <a href="https://nrkbeta.no/2009/12/18/bergensbanen-eng/">https://nrkbeta.no/2009/12/18/bergensbanen-eng/</a>. Enjoy!
+                    </li>
+                </ul>
+            </footer>
+        </div>
+    </body>
+</html>

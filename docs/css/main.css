@@ -1,0 +1,191 @@
+/* latin-ext */
+@font-face {
+    font-family: 'Source Code Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Source Code Pro'), local('SourceCodePro-Regular'), url('../fonts/scp-medium-ext.woff2') format('woff2');
+    unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Source Code Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Source Code Pro'), local('SourceCodePro-Regular'), url('../fonts/scp-medium.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Playfair Display'), local('PlayfairDisplay-Regular'), url('../fonts/playfair-ext.woff2') format('woff2');
+    unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Playfair Display'), local('PlayfairDisplay-Regular'), url('../fonts/playfair.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    background: #10B4E2;
+}
+
+nav {
+    position: fixed;
+    height: 1em;
+    padding: .6em 12px .6em 128px;
+    width: 720px;
+    background: #37c3ea;
+    left: 50%;
+    transform: translate(-50%);
+    color: #ffffff;
+    border: .2em #03A1CE solid;
+    border-radius: 0 0 1em 1em;
+    border-top: none;
+    font-family: 'Source Code Pro', monospace;
+    z-index: 463165;
+}
+
+nav a#elkslogo {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    text-decoration: none;
+}
+
+nav a#elkslogo:hover {
+    background: transparent;
+}
+
+nav a {
+    color: #ffffff;
+    margin-left:.3em;
+    padding:.15em;
+}
+
+nav a:hover {
+    background: #03A1CE;
+}
+
+#content {
+    position: absolute;
+    padding: 45px 110px 2em 110px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 620px;
+    background: #FFFFFF;
+    font-family: 'Playfair Display', 'Helvetica', 'Arial', sans-serif;
+    border-radius:0 0 1em 1em;
+    margin-bottom: 2em;
+}
+
+#content a {
+    color: #03A1CE;
+}
+
+#content tt, code {
+    font-family: 'Source Code Pro', monospace;
+}
+
+#content code {
+    margin: 1em;
+    display: block;
+    padding: 0.9em;
+    background: #222222;
+    color: #FFFFFF;
+    font-size: 0.83em;
+    border: 2px #37C3EA solid;
+    border-radius: 15px;
+}
+
+#content .asciinema-terminal {
+    border: 2px #37C3EA solid;
+    border-radius: 15px;
+    padding: 0.9em;
+    font-family: 'Source Code Pro', monospace;
+}
+
+#content code.output:before {
+    content: "Output";
+    color: #FF5035;
+    font-weight: bold;
+    clear: right;
+    display: block;
+    text-align: center;
+    border-bottom: 1px #FF5035 solid;
+    margin-bottom: .3em;
+}
+
+#content section p:not(:first-child) {
+    text-indent: 1em;
+}
+
+#content p {
+    margin-bottom: .3em;
+}
+
+#content h1,h2,h3,h4,h5,h6 {
+    font-family: 'Source Code Pro', monospace;
+    margin: 1em 0;
+    text-align: center;
+}
+
+#content h1 {
+    font-family: 'Playfair Display', Helvetica, Arial, serif; 
+}
+
+#content .cmd::before {
+    content: "$ ";
+}
+
+#content .cmd.root::before {
+    content: "# ";
+}
+
+#content .cmd.python::before {
+    content: ">>> ";
+}
+
+#content code.cmd::before {
+    color: #FFC335;
+}
+
+#content code .highlight {
+    color: #FF5035;
+}
+
+#content footer .footnotes {
+    margin: 2em 0;
+    color: #222;
+}
+
+#content footer .footnotes a {
+    color: inherit;
+}
+
+#content footer li {
+    list-style-type: none;
+    padding: .2em .5em;
+    background: #e5e5e5;
+    border-right: 6px #dadada solid;
+}
+
+#content footer li:nth-child(even) {
+    background: #dadada;
+}
+
+#content .hide-controls .control-bar {
+    display: none;
+}
+
