@@ -108,6 +108,10 @@ nav a:hover {
     border-radius: 15px;
 }
 
+#content #asciinema-elkme-demo {
+    margin: 1em -1px;
+}
+
 #content .asciinema-terminal {
     border: 4px #03A1CE solid;
     border-radius: 15px;
@@ -131,7 +135,7 @@ nav a:hover {
 }
 
 #content section p {
-    padding: 0 100px;
+    padding: 0 70px;
     margin-bottom: .3em;
 }
 
