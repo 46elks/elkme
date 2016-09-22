@@ -38,19 +38,18 @@
 }
 
 body {
-    background: #10B4E2;
+    background: #fff;
 }
 
 nav {
     position: fixed;
     height: 1em;
-    padding: .6em 12px .6em 128px;
+    padding: 1.0em 12px 1.0em 128px;
     width: 720px;
     background: #37c3ea;
     left: 50%;
     transform: translate(-50%);
     color: #ffffff;
-    border: .2em #03A1CE solid;
     border-radius: 0 0 1em 1em;
     border-top: none;
     font-family: 'Source Code Pro', monospace;
@@ -59,8 +58,8 @@ nav {
 
 nav a#elkslogo {
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: 7px;
+    top: 8px;
     text-decoration: none;
 }
 
@@ -101,18 +100,18 @@ nav a:hover {
 #content code {
     margin: 1em;
     display: block;
-    padding: 0.9em;
+    padding: 1.5em;
     background: #222222;
     color: #FFFFFF;
-    font-size: 0.83em;
-    border: 2px #37C3EA solid;
+    font-size: .83em;
+    border: 4px #03A1CE solid;
     border-radius: 15px;
 }
 
 #content .asciinema-terminal {
-    border: 2px #37C3EA solid;
+    border: 4px #03A1CE solid;
     border-radius: 15px;
-    padding: 0.9em;
+    padding: 1.5em;
     font-family: 'Source Code Pro', monospace;
 }
 
@@ -131,7 +130,8 @@ nav a:hover {
     text-indent: 1em;
 }
 
-#content p {
+#content section p {
+    padding: 0 100px;
     margin-bottom: .3em;
 }
 
