@@ -37,6 +37,29 @@
     padding: 0px;
 }
 
+#content sup {
+    margin-top: -50px;
+    padding-top: 50px;
+    z-index: -5;
+    font-size:0.8em;
+}
+
+#content sup a::before {
+    content: "[";
+}
+
+#content sup a::after {
+    content: "]";
+}
+
+h2:before {
+    display: block;
+    content: " ";
+    margin-top: -50px;
+    height: 50px;
+    visibility: hidden;
+}
+
 body {
     background: #fff;
 }
@@ -98,7 +121,7 @@ nav a:hover {
 }
 
 #content code {
-    margin: 2em 0;
+    margin: 1em 0 2em 0;
     display: block;
     padding: 1.5em;
     background: #222222;
@@ -127,7 +150,7 @@ nav a:hover {
 
 #content code.output:before {
     content: "Output";
-    color: #FF5035;
+    color: #FF5035 !important;
     font-weight: bold;
     clear: right;
     display: block;
@@ -146,13 +169,13 @@ nav a:hover {
 }
 
 #content h1,h2,h3,h4,h5,h6 {
-    font-family: 'Playfair Display', Helvetica, Arial, serif; 
+    font-family: 'Playfair Display', Helvetica, Arial, serif;
     margin: 2em 0 1em 0;
     text-align: center;
 }
 
 #content h1.cmd,h2.cmd,h3.cmd,h4.cmd,h5.cmd,h6.cmd {
-    font-family: 'Source Code Pro', monospace; 
+    font-family: 'Source Code Pro', monospace;
 }
 
 #content h1 {
@@ -191,12 +214,17 @@ nav a:hover {
 #content footer li {
     list-style-type: none;
     padding: .2em .5em;
-    background: #e5e5e5;
+    background: #ededed;
     border-right: 6px #dadada solid;
 }
 
+#content footer li:target {
+    margin: 0;
+    border-color: red;
+}
+
 #content footer li:nth-child(even) {
-    background: #dadada;
+    background: #ffffff;
 }
 
 #content .hide-controls .control-bar {

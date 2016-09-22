@@ -16,18 +16,31 @@
 
             <a href="#elkme">elkme</a> |
             <a href="#sdk">Python SDK</a> |
-            <a href="#preselks">About 46elks</a>
+            <a href="#ineedsomebody">Help!</a>
             
         </nav>
 
         <div id="content">
             <h1>The Elkme Suite</h1>
+            <h2>Sending SMS from your Terminal</h2>
+
+            <div id="asciinema-elkme-demo" class="hide-controls">
+                <!-- 
+                     asciinema is *really* neat, you should really try it out
+                     you're looking at this.
+
+                     Lot's of thanks to Marcin Kulik for developing it :)
+
+                     https://asciinema.org/
+                -->
+            </div>
+            <script>
+asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height': 4, 'width': 70, 'autoPlay': true});
+            </script>
 
             <section>
                 <p>
-                    Elkme is a set of tools to help you integrate SMS with your
-                    UNIX/Linux/macOS prompt and your Python applications and
-                    scripts.
+                    
                 </p>
             </section>
 
@@ -36,75 +49,93 @@
             <section>
             <p>
                 <tt>elkme</tt> is a tool for empowering your UNIX® shell with
-                the ability to send SMS from the command-line.
+                the ability to send SMS from the command-line using the
+                <a href="https://www.46elks.com/">46elks API</a>.
             </p>
 
             <p>
-                Utilizing the <a href="https://www.46elks.com/">46elks API</a>
-                to conveniently send SMS from your command-line.
-                You can with minimal effort set up <tt>cron</tt> to send you
-                information about load, the latest podcast or the progress of
-                downloading 7½ hours of Norwegian trains (in HD)<sup id="fnm1"><a href="#fn1">1</a></sup>.
+                You can with minimal effort set up a cronjob to send you a SMS
+                with information about load, the status of the
+                backup-task or the progress of downloading 7½ hours of
+                Norwegian trains (in HD)<sup id="fnm1"><a href="#fn1">1</a></sup>.
             </p>
-            <p>
-                The demonstration below shows how easy it is to send your uptime
-                and load in a SMS using <tt>elkme</tt> after initial configuration.
-                
-            </p>
-            </section>
-
-            <div id="asciinema-elkme-demo" class="hide-controls"></div>
-            <script>
-asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height': 4, 'width': 70, 'autoPlay': true});
-            </script>
-
-            <section>
             <p>
                 The idea of <tt>elkme</tt> is to provide sysadmins, developers
                 and power users with a toolkit to communicate with any phone
                 anywhere at any time from a command-line. SMS is <strong>the</strong>
                 de facto standard for real-time notifications, and <tt>elkme</tt>
-                makes SMS as convenient and accessible as using <tt>cat</tt> or <tt>echo</tt>.
+                makes using SMS as convenient and accessible as using <tt>less</tt>.
             </p>
             </section>
 
             <h3>Installation</h3>
             <section>
             <p>
-                <tt>elkme</tt> is available as source on <a href="https://github.com/46elks/elkme">github.com/46elks/elkme</a>
-                and compatible with Python 2 and 3 (with <tt>requests</tt> installed).
-            </p>
-            <p>
-                You may also install <tt>elkme</tt> from the pypi package
+                Install <tt>elkme</tt> from the pypi package
                 <a href="https://pypi.python.org/pypi/elkme">elkme</a>
-                by using <tt>pip</tt>:
+                using <tt>pip</tt>:
             </p>
 
             <code class="cmd root">
                 pip install elkme
             </code>
+
+            <p>
+                The source code for <tt>elkme</tt> is also available on
+                <a href="https://github.com/46elks/elkme">github.com/46elks/elkme</a>
+                and is compatible with Python 2 and 3 (with the sole dependency
+                <tt>requests</tt>).
+            </p>
+
+            <p>
+                You may have to run <tt>pip</tt> in a <a href="https://virtualenv.pypa.io/en/stable/">virtualenv</a>
+                or as root using <tt>sudo</tt>
+                if you are trying to install <tt>elkme</tt> and see something
+                similar to the message below.
+            </p>
+
+            <code class="cmd output">
+                OSError: [Errno 13] Permission denied: '/usr/lib/pthon3.5/site-packages/requests-2.9.1.dist-info/DESCRIPTION.rst'
+            </code>
+
+            <p>
+                Congratulations, you have now installed <tt>elkme</tt>!
+                <br />You can now verify that it works:
+            </p>
+
+            <code class="cmd">
+                elkme --version
+            </code>
+
+            <code class="output">
+                elkme 0.4.5 (release date 2016-07-26)<br />
+                (c) 2015-2016 46elks AB &lt;hello@46elks.com&gt;
+            </code>
+
             </section>
 
             <h3>Setup</h3>
 
             <section>
             <p>
-                Getting started with <tt>elkme</tt> by registering for a
+                Get started with <tt>elkme</tt> by registering for a
                 <a href="https://www.46elks.com/">46elks</a> account and extracting
                 your API keys from the dashboard.
+            </p>
+
+            <p>
+                Let <tt>elkme</tt> generate your configuration file<sup id="fnm2"><a href="#fn2">2</a></sup>
+                for you so you can use <tt>elkme</tt> whenever you want without
+                having to look for your credentials by using the
+                <tt>elkme --saveconf</tt> command as seen below.
             </p>
 
             <code class="cmd">
                 elkme --saveconf -u <span class="highlight">(API key)</span> -p
                 <span class="highlight">(API secret)</span> --to
                 <span class="highlight">(Your Phonenumber)</span>
-                --from <span class="highlight">$(hostname)</span>
+                --from <span class="highlight">(Your Phonenumber)</span>
             </code>
-
-            <p>
-                This saves your default details and you may start sending SMS from
-                your command-line, cronjobs and by utilizing the elkme Python SDK.
-            </p>
 
             <code class="cmd">
                 elkme <span class="highlight">"Good morning, upper east side"</span>
@@ -118,19 +149,19 @@ asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height'
                     to sending SMS from the command-line, it is also the reference
                     implementation for connecting to the 46elks API from Python.
                 </p>
+                <h4>Note:</h4>
                 <p>
-                    <h4>Note:</h4>
                     The <tt>elkme</tt> Python SDK is in early-beta and is prone
                     to change with every release.
                 </p>
             </section>
 
-            <h2 id="preselks">About 46elks</h2>
+            <h2 id="ineedsomebody">Help & Support</h2>
             <section>
-                <h4>
-                Adding SMS and voice to your application or service should be
-                easy
-                </h4>
+                <p>
+                    For any and all support on Elkme, please contact
+                    <a href="mailto:emil@46elks.com">emil@46elks.com</a>
+                </p>
             </section>
 
             <footer>
@@ -139,6 +170,12 @@ asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height'
                     <li id="fn1">
                         <a href="#fnm1">Footnote 1</a> &mdash;
                         <a href="https://nrkbeta.no/2009/12/18/bergensbanen-eng/">https://nrkbeta.no/2009/12/18/bergensbanen-eng/</a>. Enjoy!
+                    </li>
+                    <li id="fn2">
+                        <a href="#fnm2">Footnote 2</a> &mdash;
+                        The <tt>elkme</tt> configuration files are placed in
+                        <tt>~/.config/elkme</tt> on Linux and <tt>~/Library/Application\ Support/elkme</tt>
+                        on macOS
                     </li>
                 </ul>
             </footer>
