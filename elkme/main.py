@@ -81,9 +81,9 @@ def main():
     """Executed on run"""
 
     try:
-        input = raw_input
+        io_in = raw_input
     except NameError:
-        pass
+        io_in = input
 
     args = parse_args()
     if args.version:
@@ -114,16 +114,16 @@ def main():
         conf['password'] = args.password
 
     message = None
-    if args.message and not args.file:
+    if args.message and not args.file: # Message in argument
         message = args.message
-    elif args.file:
+    elif args.file: # Read file support
         with open(args.file, 'r') as openfile:
             message = openfile.read()
-    elif not sys.stdin.isatty():
+    elif not sys.stdin.isatty(): # Pipe support
         message = ''
         try:
             while True:
-                message += input()
+                message += io_in()
                 message += '\n'
         except EOFError:
             pass
@@ -145,14 +145,6 @@ def main():
     except KeyError:
       invalid_conf = True
 
-    if args.numbers:
-        if not message:
-          message = ''
-        numbers = elks_conn.list_numbers(all = 'all' in message)
-        for i, number in enumerate(numbers):
-          print("(%s) %s" % (i, number))
-        exit(0)
-
     if not message:
         print(USAGE, file=sys.stderr)
         exit(-1)
@@ -162,20 +154,10 @@ def main():
 
     if invalid_conf:
       print(USAGE, file=sys.stderr)
-      print("\n\nYour configuration is invalid", file=sys.stderr)
+      print("\n\nInvalid configuration", file=sys.stderr)
       exit(-1)
 
-    if args.call:
-        response = elks_conn.make_call(message,
-            conf.get('to', None),
-            conf.get('from', None))
-        if 'debug' in conf:
-            print(response)
-        elif 'verbose' in conf:
-            retval = json.loads(response)
-            print('Made connection to ' + conf['to'])
-    else:
-        send_sms(elks_conn, conf, message)
+    send_sms(elks_conn, conf, message, length=args.length)
 
 def parse_args():
     """Parse the arguments to the application"""
@@ -207,20 +189,26 @@ def parse_args():
                         action='count', help="""
                         Generates a configuration file from the commandline
                         options and exits.""")
+    parser.add_argument('-l', '--length', metavar='length',
+            action='store', type=int, default=160,
+            help='Maximum length of the message')
     parser.add_argument('-c', '--config', dest='configfile',
                         help="""Location of the custom configuration file""")
-    parser.add_argument('--call', '--dial', action='store_true', default=False,
-                        help="""Make a call [TO BE DEPRECATED]""")
-    parser.add_argument('--numbers', action='store_true',
-                        help="Show my numbers [TO BE DEPRECATED]")
     return parser.parse_args()
 
-def send_sms(conn, conf, message):
+def send_sms(conn, conf, message, length=160):
     sender = conf.get('from', 'elkme')
     to = conf.get('to', None)
 
+    if length > 1530 or length < 0:
+        print('Length must be larger than 0 and smaller than 1530')
+        return
+
+    if not isinstance(message, str):
+        message = " ".join(message)
+
     try:
-        response = conn.send_sms(message[:159], to, sender)
+        response = conn.send_sms(message[:length], to, sender)
     except HTTPError as e:
         print(e)
         return
@@ -230,10 +218,10 @@ def send_sms(conn, conf, message):
     elif 'verbose' in conf:
         retval = json.loads(response)
 
-        if len(message) > 160:
+        if len(message) > length:
             print(message)
             print('----')
-            print('Sent first 160 characters to ' + retval['to'])
+            print('Sent first %s characters to %s' % (length, retval['to']))
         else:
             print('Sent "' + retval['message'] + '" to ' + retval['to'])
 

@@ -65,7 +65,7 @@ class Elks:
             'to': to,
             'message': message
         }
-        
+
         for option in options:
           if option not in ['dontlog', 'dryrun', 'flash']:
             raise Exception('Option %s not supported' % option)
@@ -81,30 +81,4 @@ class Elks:
             sender=sender,
             options=options)
         return self.query_api(sms)
-
-    def format_call_payload(self, payload, to, sender):
-        voice_start = parse_payload(payload)
-
-        call = {
-            'from': sender,
-            'to': to,
-            'voice_start': voice_start
-        }
-        return call
-
-    def make_call(self, payload, to, sender):
-        """ Make a call connection to the 46elks API.
-        Will be deprecated and replaced. """
-        call = self.format_call_payload(payload, to, sender)
-        return self.query_api(call, 'Calls')
-
-    def list_numbers(self, all = False):
-        """ List numbers belonging to the current user.
-        Will be deprecated and replaced. """
-        response = self.query_api(endpoint='Numbers')
-        numbers = json.loads(response)['data']
-        if not all:
-            numbers = filter(lambda num: num['active'] == 'yes', numbers)
-        numbers = map(lambda num: num['number'], numbers)
-        return list(numbers)
 
