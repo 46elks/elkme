@@ -11,7 +11,6 @@ import requests
 from requests.exceptions import HTTPError
 import json
 import sys
-from .helpers import parse_payload
 
 class Elks:
     auth = None

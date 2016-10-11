@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.7] - 2016-10-11
+### Fixed
+- Removed broken import
+
 ## [0.4.6] - 2016-10-06
 ### Added
 - Set explicit length limit for outgoing SMS
