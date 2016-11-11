@@ -13,15 +13,28 @@ import json
 import sys
 
 class Elks:
+    """ Wrapper to send queries to the 46elks API
+    """
     auth = None
     api_url = "https://api.46elks.com/a1/%s"
 
     def __init__(self, auth=None, api_url=None):
+        """ Initializes the connector to 46elks. Makes no connection, but
+        is used to set the authentication (a tuple with (username, password))
+        and the API base URL (default http://api.46elks.com/a1/)
+        """
         self.auth = auth
         if api_url:
             self.api_url = '%s/' % api_url + '%s'
 
     def query_api(self, data=None, endpoint='SMS'):
+        """ Send a request to the 46elks API.
+        Fetches SMS history as JSON by default, sends a HTTP POST request
+        with the incoming data dictionary as a urlencoded query if data is
+        provided, otherwise HTTP GET
+
+        Throws HTTPError on non 2xx
+        """
         url = self.api_url % endpoint
         if data:
             response = requests.post(
@@ -43,6 +56,9 @@ class Elks:
 
 
     def validate_number(self, number):
+        """ Checks if a number looks somewhat like a E.164 number. Not an
+        exhaustive check, as the API takes care of that
+        """
         if not isinstance(number, str):
             raise Exception('Phone number may not be empty')
         if number[0] == '+' and len(number) > 2 and len(number) < 16:
@@ -52,6 +68,8 @@ class Elks:
 
 
     def format_sms_payload(self, message, to, sender='elkme', options=[]):
+        """ Helper function to create a SMS payload with little effort
+        """
         self.validate_number(to)
 
         if not isinstance(message, str):

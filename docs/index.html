@@ -16,8 +16,9 @@
 
             <a href="#elkme">elkme</a> |
             <a href="#sdk">Python SDK</a> |
-            <a href="#ineedsomebody">Help!</a>
-            
+            <a href="#ineedsomebody">Help!</a> |
+            <a href="https://github.com/46elks/elkme">Clone on GitHub</a>
+
         </nav>
 
         <div id="content">
@@ -25,7 +26,7 @@
             <h2>Sending SMS from your Terminal</h2>
 
             <div id="asciinema-elkme-demo" class="hide-controls">
-                <!-- 
+                <!--
                      asciinema is *really* neat, you should really try it out
                      you're looking at this.
 
@@ -37,12 +38,6 @@
             <script>
 asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height': 4, 'width': 70, 'autoPlay': true});
             </script>
-
-            <section>
-                <p>
-                    
-                </p>
-            </section>
 
             <h2 class="cmd" id="elkme">elkme</h2>
 
@@ -154,13 +149,47 @@ asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height'
                     The <tt>elkme</tt> Python SDK is in early-beta and is prone
                     to change with every release.
                 </p>
+
+                <p>
+                    The <tt>elkme.elks</tt> module contains a very minimal SDK
+                    for connecting to 46elks from Python.
+                    There is no particular reason to opt for using the SDK over
+                    writing your own implementation based on the
+                    <tt>requests</tt> library as the SDK is only a very thin
+                    wrapper around the 46elks API.
+                </p>
+                <p>
+                    Connecting 46elks with Python takes less than 100 LoC and
+                    you should
+                    <a href="https://github.com/46elks/elkme/blob/master/elkme/elks.py">
+                        browse the code
+                    </a>
+                    to try to understand how it works.
+                </p>
+                <code>
+                    from elkme.elks import Elks<br />
+                    <br />
+                    elks_connector = Elks(('API USERNAME', 'API PASSWORD'))
+                    <br /><br/>
+                    <span style="color: #37c3ea;">
+                        # Allocate a Swedish number<br />
+                    </span>
+                    elks_connector.query_api(data={'country':'se'}, endpoint='Numbers')
+                    <br />
+                    <span style="color: #37c3ea;">
+                        # Fetch information about the current user<br />
+                    </span>
+                    print(elks_connector.query_api(endpoint='Me'))
+                </code>
             </section>
 
             <h2 id="ineedsomebody">Help & Support</h2>
             <section>
                 <p>
-                    For any and all support on Elkme, please contact
-                    <a href="mailto:emil@46elks.com">emil@46elks.com</a>
+                    Is something broken with <tt>elkme</tt> or you need support
+                    with 46elks in general, feel free to contact
+                    <a href="mailto:help@46elks.com">help@46elks.com</a><br />
+                    or open a ticket on <a href="https://github.com/46elks/elkme/issues">the GitHub issues page</a>.
                 </p>
             </section>
 
