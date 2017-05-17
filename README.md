@@ -7,13 +7,16 @@ This tool is still quite rough, and may behave in strange, un-accounted for
 behaviors. It is also prone for random breaking changes, although we'll
 try to keep that to a minimum ;)
 
+Please open an issue for anything that looks like a bug.
+
 ## Basic usage
 
 `./elkme.py "Wow, I'm sending this message from the terminal :)"`
 
 ## Installation
 
-Prefered way of installation is by PyPI
+`elkme` supports Python versions 2.7 and 3.3+.
+Prefered way of installation is by PyPI:
 
 `pip install elkme`
 
@@ -34,10 +37,4 @@ password = REPLACE_ME
 from = elkme
 to = +46700000000
 ````
-
-## ToDo
-
-- [x] Port to Python 3
-- [ ] Write a covering test suite
-- [x] Add support for calls
 
