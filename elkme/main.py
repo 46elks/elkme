@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2015 46elks AB <hello@46elks.com>
-# Developed in 2015 by Emil Tullstedt <emil@46elks.com>
+# Copyright (c) 2015-2017 46elks AB <hello@46elks.com>
+# Developed in 2015, 2016, 2017 by Emil Tullstedt <emil@46elks.com>
 # Licensed under the MIT License
 
 """
@@ -11,51 +11,17 @@ elkme is a commandline utility to send sms from the terminal
 
 from __future__ import print_function
 from .config import read_config, generate_config, default_config_location
-from .elks import Elks
+from .elks import Elks, ElksException
 from requests.exceptions import HTTPError
 import argparse
 import os
 import sys
 import json
 
-ELK = """
-  ,;MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,.
-/MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM`   `^'  `Q/^^\\MMMpcqMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;,             `^'   `VP    YP'  `MM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMDomm;,._                     /M
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMP`        _.,,=rRMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMP^^^^MMMM'          MMMMMMMMMMMMMMMMMM
-MMMMMMMMP`              '^^oMMMPP`       ``'            \\MMMMMMMMMMMMMMMM
-MMMMMMM'                                                  ``\\MMMMMMMMMMMM
-MMMMMM'                                                          'QMMMMMM
-MMM/`                                                              \\MMMMM
-MM/_=o,                                     ,/     \\_               `MMMM
-MMMMMMM,                                   /MM     pMM\\,._           MMMM
-MMMMMMMM,                                 ,MMMM, pMMMMMMMX          /MMMM
-MMMMMMMMP                                 AMMMMMMMMMMMMMMMM\\m____.pMMMMMM
-MMMMMMMP                                  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM|         ,.mPDMMMMMMMMpo.,        \\MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM|      ,mPMMMMMMMMMMMMMMMMMDo       \\MMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM|    /MMMMMMMMMMMMMMMMMMMMMMMM\\       \\MMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM|    MMMMMMMMMMMMMMMMMMMMMMMMMMDp,.    `MMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMP     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMP    \\MMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMM|    `MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM|     \\MMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMPPDmmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMBYMMJOHANNESLMMOFMM46ELKSMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-\\MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMP
- `\\MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM`
-"""
-
 HELPTEXT = """
 Send a text message using the commandline powered by the 46elks
 API available from https://www.46elks.com.
-textme also supports pipes
+elkme also supports pipes
 """
 
 USAGE = """Hello,
@@ -89,7 +55,7 @@ def main():
     if args.version:
         from .__init__ import __version__, __release_date__
         print('elkme %s (release date %s)' % (__version__, __release_date__))
-        print('(c) 2015-2016 46elks AB <hello@46elks.com>')
+        print('(c) 2015-2017 46elks AB <hello@46elks.com>')
         print(small_elk)
         exit(0)
 
@@ -113,20 +79,7 @@ def main():
     if args.password:
         conf['password'] = args.password
 
-    message = None
-    if args.message and not args.file: # Message in argument
-        message = args.message
-    elif args.file: # Read file support
-        with open(args.file, 'r') as openfile:
-            message = openfile.read()
-    elif not sys.stdin.isatty(): # Pipe support
-        message = ''
-        try:
-            while True:
-                message += io_in()
-                message += '\n'
-        except EOFError:
-            pass
+    message = parse_message(args)
 
     if args.saveconf:
         try:
@@ -149,15 +102,15 @@ def main():
         print(USAGE, file=sys.stderr)
         exit(-1)
 
-    if args.verbose >= 2 or (message[0:3][0] == 'elks'):
-        print(ELK)
-
     if invalid_conf:
-      print(USAGE, file=sys.stderr)
-      print("\n\nInvalid configuration", file=sys.stderr)
-      exit(-1)
+        print(USAGE, file=sys.stderr)
+        print("\n\nInvalid configuration", file=sys.stderr)
+        exit(-1)
 
-    send_sms(elks_conn, conf, message, length=args.length)
+    try:
+        send_sms(elks_conn, conf, message, length=args.length)
+    except ElksException as e:
+        print(e, file=sys.stderr)
 
 def parse_args():
     """Parse the arguments to the application"""
@@ -224,6 +177,24 @@ def send_sms(conn, conf, message, length=160):
             print('Sent first %s characters to %s' % (length, retval['to']))
         else:
             print('Sent "' + retval['message'] + '" to ' + retval['to'])
+
+def parse_message(args):
+    message = None
+    if args.file: # Read from file
+        with open(args.file, 'r') as openfile:
+            message = openfile.read()
+    elif args.message: # Message in argument
+        message = " ".join(args.message)
+    elif not sys.stdin.isatty(): # Pipe support
+        message = ''
+        try:
+            while True:
+                message += io_in()
+                message += '\n'
+        except EOFError:
+            pass
+
+    return message
 
 if __name__ == '__main__':
     main()

@@ -12,6 +12,9 @@ from requests.exceptions import HTTPError
 import json
 import sys
 
+class ElksException(Exception):
+    pass
+
 class Elks:
     """ Wrapper to send queries to the 46elks API
     """
@@ -60,11 +63,11 @@ class Elks:
         exhaustive check, as the API takes care of that
         """
         if not isinstance(number, str):
-            raise Exception('Phone number may not be empty')
+            raise ElksException('Recipient phone number may not be empty')
         if number[0] == '+' and len(number) > 2 and len(number) < 16:
             return True
         else:
-            raise Exception("Phone number must be of format +CCCXXX...")
+            raise ElksException("Phone number must be of format +CCCXXX...")
 
 
     def format_sms_payload(self, message, to, sender='elkme', options=[]):
@@ -85,7 +88,7 @@ class Elks:
 
         for option in options:
           if option not in ['dontlog', 'dryrun', 'flash']:
-            raise Exception('Option %s not supported' % option)
+            raise ElksException('Option %s not supported' % option)
           sms[option] = 'yes'
 
         return sms
