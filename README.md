@@ -11,7 +11,11 @@ Please open an issue for anything that looks like a bug.
 
 ## Basic usage
 
-`./elkme.py "Wow, I'm sending this message from the terminal :)"`
+`python -m elkme.main "Wow, I'm sending this message from the terminal :)"`
+
+or (if installed)
+
+`elkme "Good morning, upper east side"`
 
 ## Installation
 
