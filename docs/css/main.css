@@ -149,14 +149,7 @@ nav a:hover {
 }
 
 #content code.output:before {
-    content: "Output";
-    color: #FF5035 !important;
-    font-weight: bold;
-    clear: right;
-    display: block;
-    text-align: center;
-    border-bottom: 1px #FF5035 solid;
-    margin-bottom: .3em;
+    content: "";
 }
 
 #content section p:not(:first-child) {
@@ -199,7 +192,7 @@ nav a:hover {
 }
 
 #content code .highlight {
-    color: #FF5035;
+    color: #37C3EA;
 }
 
 #content footer .footnotes {
