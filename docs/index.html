@@ -99,11 +99,8 @@ asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height'
             </p>
 
             <code class="cmd">
-                elkme --version
-            </code>
-
-            <code class="output">
-                elkme 0.4.5 (release date 2016-07-26)<br />
+                elkme --version<br />
+                elkme 0.4.7 (release date 2016-10-11)<br />
                 (c) 2015-2016 46elks AB &lt;hello@46elks.com&gt;
             </code>
 
@@ -171,12 +168,12 @@ asciinema.player.js.CreatePlayer('asciinema-elkme-demo', 'elkme.json', {'height'
                     <br />
                     elks_connector = Elks(('API USERNAME', 'API PASSWORD'))
                     <br /><br/>
-                    <span style="color: #37c3ea;">
+                    <span class="highlight">
                         # Allocate a Swedish number<br />
                     </span>
                     elks_connector.query_api(data={'country':'se'}, endpoint='Numbers')
                     <br />
-                    <span style="color: #37c3ea;">
+                    <span class="highlight">
                         # Fetch information about the current user<br />
                     </span>
                     print(elks_connector.query_api(endpoint='Me'))
