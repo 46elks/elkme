@@ -87,7 +87,7 @@ class Elks:
         }
 
         for option in options:
-          if option not in ['dontlog', 'dryrun', 'flash']:
+          if option not in ['dontlog', 'dryrun', 'flashsms']:
             raise ElksException('Option %s not supported' % option)
           sms[option] = 'yes'
 
@@ -101,4 +101,3 @@ class Elks:
             sender=sender,
             options=options)
         return self.query_api(sms)
-

@@ -106,9 +106,13 @@ def main():
         print(USAGE, file=sys.stderr)
         print("\n\nInvalid configuration", file=sys.stderr)
         exit(-1)
+    
+    options = []
+    if args.flash:
+        options.append('flashsms')
 
     try:
-        send_sms(elks_conn, conf, message, length=args.length)
+        send_sms(elks_conn, conf, message, length=args.length, options=options)
     except ElksException as e:
         print(e, file=sys.stderr)
 
@@ -138,6 +142,8 @@ def parse_args():
                         help="Your API username from https://www.46elks.com/")
     parser.add_argument('-p', '--password', dest='password', action='store',
                         help="Your API password from https://www.46elks.com/")
+    parser.add_argument('--flash', action='store_true',
+                        help="Send SMS as a flash-SMS")
     parser.add_argument('--saveconf', dest='saveconf',
                         action='count', help="""
                         Generates a configuration file from the commandline
@@ -149,7 +155,7 @@ def parse_args():
                         help="""Location of the custom configuration file""")
     return parser.parse_args()
 
-def send_sms(conn, conf, message, length=160):
+def send_sms(conn, conf, message, length=160, options=[]):
     sender = conf.get('from', 'elkme')
     to = conf.get('to', None)
 
@@ -161,7 +167,7 @@ def send_sms(conn, conf, message, length=160):
         message = " ".join(message)
 
     try:
-        response = conn.send_sms(message[:length], to, sender)
+        response = conn.send_sms(message[:length], to, sender, options=options)
     except HTTPError as e:
         print(e)
         return
