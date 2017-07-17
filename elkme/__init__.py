@@ -4,4 +4,4 @@
 #
 
 __version__ = '0.6.0'
-__release_date__ = 'DEVELOPMENT BUILD'
+__release_date__ = '2017-07-17'
