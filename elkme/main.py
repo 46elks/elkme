@@ -10,7 +10,7 @@ elkme is a commandline utility to send sms from the terminal
 """
 
 from __future__ import print_function
-from .config import read_config, generate_config, default_config_location
+import elkme.config as config
 from .elks import Elks, ElksException
 from requests.exceptions import HTTPError
 import argparse
@@ -43,13 +43,10 @@ small_elk = """\
                                       OOOOO´
                                       || /\ """
 
+errors = []
+
 def main():
     """Executed on run"""
-
-    try:
-        io_in = raw_input
-    except NameError:
-        io_in = input
 
     args = parse_args()
     if args.version:
@@ -59,52 +56,32 @@ def main():
         print(small_elk)
         exit(0)
 
-    if args.configfile:
-        conffile = os.path.expanduser(args.configfile)
-    else:
-        conffile = default_config_location()
-
-    conf = read_config(conffile)
-
-    if args.quiet < 1:
-        conf['verbose'] = True
-    if args.verbose >= 1 and args.quiet < 1:
-        conf['debug'] = True
-    if args.to:
-        conf['to'] = args.to
-    if args.sender:
-        conf['from'] = args.sender
-    if args.username:
-        conf['username'] = args.username
-    if args.password:
-        conf['password'] = args.password
+    conf, conf_status = config.init_config(args)
+    if not conf_status[0]:
+        errors.append(conf_status[1])
+    elif conf_status[1]:
+        print(conf_status[1])
 
     message = parse_message(args)
-
-    if args.saveconf:
-        try:
-            with open(conffile, 'w') as fdest:
-                settings = generate_config(conf)
-                settings.write(fdest)
-        except IOError as e:
-            print(e)
-        if not message:
-            exit(0)
+    if conf_status[1] and not message:
+        # No message but the configuration file was stored
+        sys.exit(0)
 
     invalid_conf = False
     try:
-      elks_conn = Elks(auth = (conf['username'], conf['password']),
-              api_url = conf.get('api_url'))
+        elks_conn = Elks(auth = (conf['username'], conf['password']),
+                api_url = conf.get('api_url'))
     except KeyError:
-      invalid_conf = True
+        errors.append('API keys not properly set. Please refer to ' +
+            '`elkme --usage`, `elkme --help` or ' +
+            'https://46elks.github.io/elkme')
 
     if not message:
         print(USAGE, file=sys.stderr)
         exit(-1)
 
-    if invalid_conf:
-        print(USAGE, file=sys.stderr)
-        print("\n\nInvalid configuration", file=sys.stderr)
+    for error in errors:
+        print('[ERROR] {}'.format(error))
         exit(-1)
     
     options = []
@@ -153,6 +130,8 @@ def parse_args():
             help='Maximum length of the message')
     parser.add_argument('-c', '--config', dest='configfile',
                         help="""Location of the custom configuration file""")
+    parser.add_argument('--editconf', action='store_true', help="""
+                        Opens the configuration file in your $EDITOR""")
     return parser.parse_args()
 
 def send_sms(conn, conf, message, length=160, options=[]):
@@ -192,6 +171,11 @@ def parse_message(args):
     elif args.message: # Message in argument
         message = " ".join(args.message)
     elif not sys.stdin.isatty(): # Pipe support
+        try:
+            io_in = raw_input # Python 2
+        except NameError:
+            io_in = input # Python 3
+
         message = ''
         try:
             while True:

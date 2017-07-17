@@ -13,6 +13,51 @@ except ImportError:
 import sys
 import os
 import platform
+from subprocess import call
+
+def init_config(args):
+    status = (None, None)
+    conffile = locate_config(args)
+    conf = read_config(conffile)
+    conf = update_config_with_args(conf, args)
+    if args.saveconf:
+        status = save_config(conf, conffile)
+
+    if args.editconf:
+        open_text_editor(conffile)
+
+    return (conf, status)
+
+def open_text_editor(destfile):
+    edited = False
+    editors = [
+            os.environ.get('EDITOR'),
+            'nano',
+            'vim',
+            'vi',
+            'emacs',
+            'gedit'
+    ]
+    for editor in editors:
+        if not editor:
+            continue
+
+        retcode = call(['which', editor]) # Is the text editor in PATH?
+        if not retcode: # UNIX returns 0 on success
+            call([editor, destfile])
+            edited = True
+            break
+    if not edited:
+        print('Couldn\'t find a text editor on your system')
+    else:
+        print('Done editing the configuration file')
+    sys.exit(0)
+
+def locate_config(args):
+    if args.configfile:
+        return os.path.expanduser(args.configfile)
+    else:
+        return default_config_location()
 
 
 def default_config_location(Filename="elkme"):
@@ -72,7 +117,33 @@ def generate_config(conf, section="46elks"):
         error = "You need to provide options to be stored as"
         error += " commandline options"
         print(error, file=sys.stderr)
-    if 'verbose' in conf:
-        print("Wrote to the config file :)")
-    return config
+        return (False, config)
+    return (True, config)
 
+def update_config_with_args(conf, args):
+    if args.quiet < 1:
+        conf['verbose'] = True
+    if args.verbose >= 1 and args.quiet < 1:
+        conf['debug'] = True
+    if args.to:
+        conf['to'] = args.to
+    if args.sender:
+        conf['from'] = args.sender
+    if args.username:
+        conf['username'] = args.username
+    if args.password:
+        conf['password'] = args.password
+    return conf
+
+def save_config(conf, conffile):
+    status = None
+    try:
+        with open(conffile, 'w') as fdest:
+            status, settings = generate_config(conf)
+            settings.write(fdest)
+    except IOError as e:
+        return (False, 'Failed updating configuration file:\n{}'.format(e))
+
+    if status:
+        print('Updated configuration file {}'.format(conffile))
+    return (True, status)
