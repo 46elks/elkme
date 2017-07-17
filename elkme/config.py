@@ -10,15 +10,56 @@ try:
     import ConfigParser
 except ImportError:
     import configparser as ConfigParser
-import sys
-import os
+import sys, os, stat
 import platform
 from subprocess import call
 
+template = """\
+#
+# elkme configuration file
+#
+
+###
+# AUTHENTICATION
+#
+# Your API keys from https://dashboard.46elks.com goes here. Please keep
+# these somewhat secret
+###
+{username}
+{password}
+
+###
+# SENDING SMS DETAILS
+#
+# Set a default recipient (with the `to` key) and a default sender
+# (using the `from` key). Your `to` key must be a E.163 international format
+# phone number and your `from` key must either be E.163 or a valid
+# alphanumerical sender (starting with letter, maximum of 11 letters/digits)
+#
+# The from-number should be either your own number (as you registered it on
+# your 46elks account) or a 46elks number on your account.
+###
+{from}
+{to}
+
+###
+# ROUTING
+#
+# If you have a mock 46elks server available for debugging purposes or a
+# proxy or something, you can use the `api_url` key to route your API calls
+# to it. Most people will want to leave this at it's default
+###
+# api_url = https://api.46elks.com/a1
+"""
+
 def init_config(args):
-    status = (None, None)
+    status = (True, None)
     conffile = locate_config(args)
-    conf = read_config(conffile)
+    conf = {}
+    try:
+        conf = read_config(conffile)
+    except IOError as e:
+        pass
     conf = update_config_with_args(conf, args)
     if args.saveconf:
         status = save_config(conf, conffile)
@@ -82,47 +123,45 @@ def default_config_location(Filename="elkme"):
 
 
 def read_config(path, section="46elks"):
-    """Reads configuration from a configuration file using the
-    ConfigParser library"""
-    config = ConfigParser.RawConfigParser()
-    try:
-        config.read(path)
-    except ConfigParser.MissingSectionHeaderError:
-        return {}
     settings = {}
-    try:
-        for element in config.items(section):
-            settings[element[0]] = element[1]
-    except ConfigParser.NoSectionError:
-        return {}
+    with open(path, 'r') as f:
+        row = 0
+        for line in f:
+            row += 1
+            line = line.strip()
+            if not line or line[0] in '[#':
+                continue
+            line = line.split('=', 1)
+            if len(line) != 2:
+                print('[ERROR] Expected = delimited on line {}'.format(row))
+                continue
+            key = line[0].strip()
+            value = line[1].strip()
+            settings[key] = value
     return settings
 
 
-def generate_config(conf, section="46elks"):
+def generate_config(conf):
     """
     Generates a configuration file using the ConfigParser library that
     can be saved to a file for subsequent reads
     """
-    config = ConfigParser.RawConfigParser()
-    config.add_section(section)
-    if 'username' in conf:
-        config.set(section, 'username', conf['username'])
-    if 'password' in conf:
-        config.set(section, "password", conf['password'])
-    if 'to' in conf:
-        config.set(section, "to", conf['to'])
-    if 'from' in conf:
-        config.set(section, "from", conf['from'])
-    if not config.items(section):
-        error = "You need to provide options to be stored as"
-        error += " commandline options"
-        print(error, file=sys.stderr)
-        return (False, config)
-    return (True, config)
+
+    c = {}
+    def to_key(key, default):
+        if conf.get(key):
+            c[key] = '{} = {}'.format(key, conf.get(key))
+        else:
+            c[key] = default
+
+    to_key('username', '# username = u1234...')
+    to_key('password', '# password = secret...')
+    to_key('from', '# from = elkme')
+    to_key('to', '# to = +46700000000')
+    return (True, c)
 
 def update_config_with_args(conf, args):
-    if args.quiet < 1:
-        conf['verbose'] = True
+    conf['verbose'] = True
     if args.verbose >= 1 and args.quiet < 1:
         conf['debug'] = True
     if args.to:
@@ -140,7 +179,10 @@ def save_config(conf, conffile):
     try:
         with open(conffile, 'w') as fdest:
             status, settings = generate_config(conf)
-            settings.write(fdest)
+            fdest.write(template.format(**settings))
+        # Set file permissions to 600 for the configuration file
+        # (this is to prevent malicious usage of your API keys)
+        os.chmod(conffile, stat.S_IRUSR | stat.S_IWUSR)
     except IOError as e:
         return (False, 'Failed updating configuration file:\n{}'.format(e))
 

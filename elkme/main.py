@@ -67,7 +67,6 @@ def main():
         # No message but the configuration file was stored
         sys.exit(0)
 
-    invalid_conf = False
     try:
         elks_conn = Elks(auth = (conf['username'], conf['password']),
                 api_url = conf.get('api_url'))
@@ -102,8 +101,6 @@ def parse_args():
                         help="Display elkme version and exit")
     parser.add_argument('-v', '--verbose', action='count',
                         help="Debug output", default=0)
-    parser.add_argument('-q', '--quiet', action='count',
-                        help="Suppress most output", default=0)
     parser.add_argument('message', metavar='message', type=str, nargs='*',
                         help="The message to be sent (<160 characters)")
     parser.add_argument('-f', '--file', metavar='file', action='store',
@@ -121,15 +118,15 @@ def parse_args():
                         help="Your API password from https://www.46elks.com/")
     parser.add_argument('--flash', action='store_true',
                         help="Send SMS as a flash-SMS")
-    parser.add_argument('--saveconf', dest='saveconf',
-                        action='count', help="""
-                        Generates a configuration file from the commandline
-                        options and exits.""")
     parser.add_argument('-l', '--length', metavar='length',
             action='store', type=int, default=160,
             help='Maximum length of the message')
     parser.add_argument('-c', '--config', dest='configfile',
                         help="""Location of the custom configuration file""")
+    parser.add_argument('--saveconf', dest='saveconf',
+                        action='count', help="""
+                        Generates a configuration file from the commandline
+                        options and exits.""")
     parser.add_argument('--editconf', action='store_true', help="""
                         Opens the configuration file in your $EDITOR""")
     return parser.parse_args()
